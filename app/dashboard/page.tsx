@@ -92,7 +92,7 @@ function DashboardChallengeSelection() {
               </span>
 
               <Button variant="outline" className="my-auto rounded-full aspect-square h-12">
-                <ArrowRightIcon strokeWidth={3} className=""/>
+                <ArrowRightIcon strokeWidth={3}/>
               </Button>
 
             </CardContent>

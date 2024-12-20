@@ -67,27 +67,39 @@ export default function Dashboard() {
 function DashboardLeaderboard() {
 
   return (
-    <Card className="p-6 w-full">
+    <Card className="max-w-[50rem] lg:w-fit">
 
-      <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+      <CardHeader>
+
+        <CardTitle>
+          Leaderboard
+        </CardTitle>
+
+      </CardHeader>
+
+      <CardContent>
+
+        <Table>
+          <TableCaption>A list of your recent invoices.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Invoice</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">INV001</TableCell>
+              <TableCell>Paid</TableCell>
+              <TableCell>Credit Card</TableCell>
+              <TableCell className="text-right">$250.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+      </CardContent>
       
     </Card>
   )
@@ -144,37 +156,48 @@ function DashboardChallengeSelection() {
 function DashboardChart() {
 
   return (
-    <Card className="max-h-80 p-6">
-      <ChartContainer config={chartConfig} className="max-h-64 w-full">
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-            >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" hideLabel />}
-            />
-            <Area
-              dataKey="desktop"
-              type="linear"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
-            />
-          </AreaChart>
-        </ChartContainer>
+    <Card className="max-h-80">
+
+      <CardHeader>
+        <CardTitle>
+          Points
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+
+        <ChartContainer config={chartConfig} className="max-h-60 w-full mt-2">
+            <AreaChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                left: 12,
+                right: 12,
+              }}
+              >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dot" hideLabel />}
+              />
+              <Area
+                dataKey="desktop"
+                type="linear"
+                fill="var(--color-desktop)"
+                fillOpacity={0.4}
+                stroke="var(--color-desktop)"
+              />
+            </AreaChart>
+          </ChartContainer>
+
+        </CardContent>
     </Card>
   )
 

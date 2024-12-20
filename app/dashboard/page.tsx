@@ -69,18 +69,24 @@ function DashboardLeaderboard() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Rank</TableHead>
+              <TableHead>Rank</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Solves</TableHead>
+              <TableHead>Points</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell className="font-medium">INV001</TableCell>
-              <TableCell>Paid</TableCell>
-              <TableCell>Credit Card</TableCell>
-              <TableCell className="text-right">$250.00</TableCell>
+              <TableCell>1</TableCell>
+              <TableCell className="text-left">Shaurya Kumar</TableCell>
+              <TableCell>25</TableCell>
+              <TableCell>69,420</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>2</TableCell>
+              <TableCell className="text-left">Keshav Shah</TableCell>
+              <TableCell>23</TableCell>
+              <TableCell>69,200</TableCell>
             </TableRow>
           </TableBody>
         </Table>

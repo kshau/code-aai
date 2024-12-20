@@ -12,6 +12,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const chartData = [
   { month: "January", desktop: 186 },
@@ -33,17 +42,21 @@ export default function Dashboard() {
 
   return (
 
-    <div className="flex flex-row gap-6 w-screen justify-center">
+    <div className="w-screen flex justify-center p-6">
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-6">
 
-        <DashboardChart/>
+        <div className="flex flex-col gap-6">
 
-        <DashboardChallengeSelection/>
+          <DashboardChart/>
+
+          <DashboardChallengeSelection/>
+
+        </div>
+
+        <DashboardLeaderboard/>
 
       </div>
-
-      <DashboardLeaderboard/>
 
     </div>
 
@@ -54,8 +67,28 @@ export default function Dashboard() {
 function DashboardLeaderboard() {
 
   return (
-    <Card className="w-96">
+    <Card className="p-6 w-full">
 
+      <Table>
+        <TableCaption>A list of your recent invoices.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Invoice</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Method</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="font-medium">INV001</TableCell>
+            <TableCell>Paid</TableCell>
+            <TableCell>Credit Card</TableCell>
+            <TableCell className="text-right">$250.00</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+      
     </Card>
   )
 
@@ -71,7 +104,7 @@ function DashboardChallengeSelection() {
 
         {[0,0,0,0,0,0].map((challenge, index) => (
 
-          <Card className="min-w-64 max-w-96" key={index}>
+          <Card className="min-w-64 lg:max-w-96" key={index}>
 
             <CardHeader className="flex flex-row gap-4">
 
@@ -112,7 +145,7 @@ function DashboardChart() {
 
   return (
     <Card className="max-h-80 p-6">
-      <ChartContainer config={chartConfig} className="max-h-64 max-w-">
+      <ChartContainer config={chartConfig} className="max-h-64 w-full">
           <AreaChart
             accessibilityLayer
             data={chartData}

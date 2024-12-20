@@ -6,23 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowRightIcon } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const chartData = [
+const dashboardChartData = [
   { month: "January", desktop: 186 },
   { month: "February", desktop: 305 },
   { month: "March", desktop: 237 },
@@ -31,7 +18,7 @@ const chartData = [
   { month: "June", desktop: 214 },
 ]
 
-const chartConfig = {
+const dashboardChartConfig = {
   desktop: {
     label: "Desktop",
     color: "hsl(var(--chart-1))",
@@ -42,9 +29,9 @@ export default function Dashboard() {
 
   return (
 
-    <div className="w-screen flex justify-center p-6">
+    <div className="w-screen flex justify-center">
 
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap gap-6 justify-center m-4">
 
         <div className="flex flex-col gap-6">
 
@@ -67,7 +54,7 @@ export default function Dashboard() {
 function DashboardLeaderboard() {
 
   return (
-    <Card className="max-w-[50rem] lg:w-fit">
+    <Card className="lg:w-fit lg:max-w-[50rem]">
 
       <CardHeader>
 
@@ -80,11 +67,10 @@ function DashboardLeaderboard() {
       <CardContent>
 
         <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Invoice</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="w-[100px]">Rank</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Method</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
@@ -166,10 +152,10 @@ function DashboardChart() {
 
       <CardContent>
 
-        <ChartContainer config={chartConfig} className="max-h-60 w-full mt-2">
+        <ChartContainer config={dashboardChartConfig} className="max-h-60 w-full mt-2">
             <AreaChart
               accessibilityLayer
-              data={chartData}
+              data={dashboardChartData}
               margin={{
                 left: 12,
                 right: 12,

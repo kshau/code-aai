@@ -16,15 +16,6 @@ export default function Solve() {
 	const [editorContent, setEditorContent] = useState("");
 	const [codeOutput, setCodeOutput] = useState<string | null>(null);
 
-	const getChallengeData = async () => {
-
-		const res = await axios.post("/api/getChallengeData", {
-			challengeId
-		}, { withCredentials: true });
-
-		setEditorContent(`# Challenge ID: ${challengeId}\n# ${res.data.instruction}`);
-
-	}
 
 	useEffect(() => {
 
@@ -40,9 +31,6 @@ export default function Solve() {
 			});
 
 		})
-
-		getChallengeData();
-
 	}, [])
 
 	const attemptChallengeSolve = async () => {

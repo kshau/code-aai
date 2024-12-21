@@ -21,6 +21,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "coffee-script": "^1.12.7",
     "firebase": "^11.1.0",
     "lucide-react": "^0.469.0",
     "monaco-editor": "^0.52.2",

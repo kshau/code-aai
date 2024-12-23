@@ -106,19 +106,19 @@ function DashboardChallengeSelection() {
 	const [challengesData, setChallengesData] = useState<Challenge[]>([
 		{
 			id: "banana",
-			name: "Fizz Buzz", 
+			title: "Fizz Buzz", 
 			description: "A very nice description for a very nice challenges that you should totally solve!", 
 			difficulty: "easy"
 		}, 
 		{
 			id: "mango",
-			name: "Summation", 
+			title: "Summation", 
 			description: "Are you smart enough to be able to add two integers together? Prove it by solving!", 
 			difficulty: "medium"
 		}, 
 		{
 			id: "strawberry",
-			name: "Integration", 
+			title: "Integration", 
 			description: "What do you still remember from your calculus class in high school or college?", 
 			difficulty: "hard"
 		}
@@ -137,7 +137,7 @@ function DashboardChallengeSelection() {
 						<CardHeader className="flex flex-row gap-4">
 
 							<CardTitle>
-								{challenge.name}
+								{challenge.title}
 							</CardTitle>
 
 							<Badge className="my-auto relative bottom-1" difficulty={challenge.difficulty}>

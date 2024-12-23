@@ -14,8 +14,19 @@ export interface UserSignupRequestData {
 }
 
 export interface Challenge {
-  id: string
-  name: string, 
+  id: string | null
+  title: string, 
   description: string, 
-  difficulty: "easy" | "medium" | "hard"
+  difficulty: "easy" | "medium" | "hard", 
+  testCases: ChallengeTestCase[]
+}
+
+export interface ChallengeTestCase {
+	inputs: [
+		{
+			name: string, 
+			value: any
+		}
+	]
+	expectedOutput: string
 }

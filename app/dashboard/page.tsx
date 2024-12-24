@@ -108,19 +108,22 @@ function DashboardChallengeSelection() {
 			id: "banana",
 			title: "Fizz Buzz", 
 			description: "A very nice description for a very nice challenges that you should totally solve!", 
-			difficulty: "easy"
+			difficulty: "easy", 
+			testCases: []
 		}, 
 		{
 			id: "mango",
 			title: "Summation", 
 			description: "Are you smart enough to be able to add two integers together? Prove it by solving!", 
-			difficulty: "medium"
+			difficulty: "medium", 
+			testCases: []
 		}, 
 		{
 			id: "strawberry",
 			title: "Integration", 
 			description: "What do you still remember from your calculus class in high school or college?", 
-			difficulty: "hard"
+			difficulty: "hard", 
+			testCases: []
 		}
 	]);
 

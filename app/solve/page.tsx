@@ -7,6 +7,7 @@ import { PlayIcon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios"
 import { useSearchParams } from 'next/navigation';
+import { loadCustomDarkEditorTheme } from "@/lib/utils";
 
 export default function Solve() {
 
@@ -15,23 +16,6 @@ export default function Solve() {
 
 	const [editorContent, setEditorContent] = useState("");
 	const [codeOutput, setCodeOutput] = useState<string | null>(null);
-
-
-	useEffect(() => {
-
-		loader.init().then(monaco => {
-
-			monaco.editor.defineTheme("custom-dark", {
-				base: "vs-dark",
-				inherit: true,
-				rules: [],
-				colors: {
-					"editor.background": "#1c1917",
-				},
-			});
-
-		})
-	}, [])
 
 	const attemptChallengeSolve = async () => {
 
@@ -48,6 +32,10 @@ export default function Solve() {
 		setEditorContent("");
 		setCodeOutput(null);
 	}
+
+	useEffect(() => {
+		loadCustomDarkEditorTheme();
+	}, [])
 
 	return (
 

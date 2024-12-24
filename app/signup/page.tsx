@@ -37,15 +37,6 @@ export default function Signup() {
 
 	}
 
-	const editUserSignupRequestDataField = (field: string, value: any) => {
-
-		setUserSignupRequestData({
-			...userSignupRequestData,
-			[field]: value
-		})
-
-	}
-
 	return (
 		<Card className="w-full max-w-md mx-auto mt-32">
 
@@ -66,7 +57,10 @@ export default function Signup() {
 							Grade Level
 						</Label>
 
-						<Select value={userSignupRequestData?.gradeLevel?.toString()} onValueChange={(value: string) => { editUserSignupRequestDataField("gradeLevel", value) }}>
+						<Select value={userSignupRequestData?.gradeLevel?.toString()} onValueChange={(value: string) => { setUserSignupRequestData({
+							...userSignupRequestData, 
+							gradeLevel: parseInt(value)
+						}) }}>
 
 							<SelectTrigger id="gradeLevel">
 								<SelectValue placeholder="Select your grade level" />
@@ -74,7 +68,7 @@ export default function Signup() {
 
 							<SelectContent>
 
-								{[...Array(12), "College or higher"].map((gradeLevel, index) => (
+								{[...Array(13)].map((gradeLevel, index) => (
 									<SelectItem key={index} value={(index + 1).toString()}>
 										{/* Will fix 1th 2th etc later */}
 										{index + 1}th grade
@@ -96,7 +90,10 @@ export default function Signup() {
 						<Input
 							id="name"
 							value={userSignupRequestData?.name}
-							onChange={(e) => editUserSignupRequestDataField("name", e.target.value)}
+							onChange={(e) =>  setUserSignupRequestData({
+								...userSignupRequestData, 
+								name: e.target.value
+							})}
 							placeholder="Jeff Bezos"
 						/>
 
@@ -111,7 +108,10 @@ export default function Signup() {
 						<Input
 							id="email"
 							value={userSignupRequestData?.email}
-							onChange={(e) => editUserSignupRequestDataField("email", e.target.value)}
+							onChange={(e) =>  setUserSignupRequestData({
+								...userSignupRequestData, 
+								email: e.target.value
+							})}
 							placeholder="jeff.bezos@amazon.com"
 						/>
 
@@ -123,7 +123,10 @@ export default function Signup() {
 							Coding Experience
 						</Label>
 
-						<RadioGroup value={userSignupRequestData?.codingExperience} onValueChange={(value: string) => { editUserSignupRequestDataField("codingExperience", value) }} className="flex flex-col space-y-1">
+						<RadioGroup value={userSignupRequestData?.codingExperience} onValueChange={(value: "beginner" | "intermediate" | "advanced") => { setUserSignupRequestData({
+							...userSignupRequestData, 
+							codingExperience: value
+						})}} className="flex flex-col space-y-1">
 
 							<div className="flex items-center space-x-2">
 								<RadioGroupItem value="beginner" id="beginner" />

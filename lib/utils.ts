@@ -29,8 +29,14 @@ export interface ChallengeTestCase {
 
 export interface ChallengeTestCaseInput {
 	name: string;
-	type: "str" | "int" | "float" | "bool";
+	type: string;
 	value: any;
+}
+
+export interface LeaderboardUser {
+	name: string, 
+	solves: number, 
+	points: number
 }
 
 export function formatChallengeTestCaseInputName(inputName: string) {

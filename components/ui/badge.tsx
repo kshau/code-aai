@@ -20,11 +20,11 @@ const badgeVariants = cva(
         none:
           "",
         easy:
-          "bg-difficulty-easy hover:bg-difficulty-easy/80", 
+          "bg-difficulty-easy hover:bg-difficulty-easy text-white font-semibold", 
         medium:
-          "bg-difficulty-medium hover:bg-difficulty-medium/80", 
+          "bg-difficulty-medium hover:bg-difficulty-medium text-white font-semibold", 
         hard:
-          "bg-difficulty-hard hover:bg-difficulty-hard/80", 
+          "bg-difficulty-hard hover:bg-difficulty-hard text-white font-semibold", 
       }
     },
     defaultVariants: {

@@ -13,13 +13,12 @@ import { Challenge, cn, LeaderboardUser } from "@/lib/utils";
 import Link from "next/link";
 import axios from "axios";
 import { Pie, PieChart } from "recharts"
+import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
 
 	return (
-
-		<div className="w-screen flex justify-center">
-
+		<Navbar>
 			<div className="flex flex-wrap gap-6 justify-center m-4">
 
 				<div className="flex flex-col gap-6">
@@ -34,8 +33,7 @@ export default function Dashboard() {
 
 			</div>
 
-		</div>
-
+		</Navbar>
 	)
 
 }
@@ -257,7 +255,7 @@ function DashboardGraphics() {
 
 			</Card>
 
-			<Card className="">
+			<Card className="min">
 
 				<CardHeader>
 					<CardTitle>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { FirestoreProvider } from "@/lib/firebase/useFirestore";
 import { useEffect } from "react";
 import { loader } from "@monaco-editor/react";
+import { AuthProvider } from "@/lib/firebase/useAuth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +30,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirestoreProvider>
-            {children}
+            <AuthProvider>
+              {children}
+            </AuthProvider>
           </FirestoreProvider>
         </ThemeProvider>
       </body>

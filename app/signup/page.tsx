@@ -34,7 +34,12 @@ export default function Signup() {
 		await createDocument<UserSignupRequestData>("signup-requests", userSignupRequestData);
 
 		setAlertMessage("Signup successful!")
-
+		setUserSignupRequestData({
+			name: "",
+			gradeLevel: null,
+			email: "",
+			codingExperience: "beginner"
+		})
 	}
 
 	return (

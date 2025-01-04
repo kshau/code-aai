@@ -93,9 +93,9 @@ function Navbar({
             ) : (
               <div>
                 {user ? (
-                  <UserMenu />
+                  <NavbarUserMenu />
                 ) : (
-                  <LoginModal
+                  <NavbarLoginModal
                     isLoginOpen={isLoginOpen}
                     setIsLoginOpen={setIsLoginOpen}
                     signIn={signIn}
@@ -139,17 +139,17 @@ function Navbar({
   );
 }
 
-interface LoginModalProps {
+interface NavbarLoginModalProps {
   signIn: (user: string, password: string) => void;
   setIsLoginOpen: (isOpen: boolean) => void;
   isLoginOpen: boolean;
 }
 
-export function LoginModal({
+export function NavbarLoginModal({
   signIn,
   setIsLoginOpen,
   isLoginOpen,
-}: LoginModalProps) {
+}: NavbarLoginModalProps) {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
@@ -163,7 +163,7 @@ export function LoginModal({
       <DialogTrigger asChild>
         <Button className="text-white">Login</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-96">
         <DialogHeader>
           <DialogTitle>Authentication</DialogTitle>
           <DialogDescription>Login to continue</DialogDescription>
@@ -189,14 +189,8 @@ export function LoginModal({
               required
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full text-white"
-            onClick={() => {
-              signIn(user, password);
-            }}
-          >
-            Login with user
+          <Button type="submit" className="w-full" onClick={() => {signIn(user, password)}}>
+            Log in
           </Button>
         </form>
       </DialogContent>
@@ -204,7 +198,7 @@ export function LoginModal({
   );
 }
 
-export function UserMenu() {
+export function NavbarUserMenu() {
   const { user, logOut } = useAuth();
   return (
     <DropdownMenu>

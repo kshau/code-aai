@@ -34,9 +34,9 @@ export interface ChallengeTestCaseInput {
 }
 
 export interface LeaderboardUser {
-	name: string, 
-	solves: number, 
-	points: number
+	name: string;
+	solves: number;
+	points: number;
 }
 
 export function formatChallengeTestCaseInputName(inputName: string) {
@@ -55,18 +55,20 @@ export function capitalizeFirstLetter(str: string) {
 }
 
 export function loadCustomDarkEditorTheme() {
-
-	loader.init().then(monaco => {
-
+	loader.init().then((monaco) => {
 		monaco.editor.defineTheme("custom-dark", {
-		  base: "vs-dark",
-		  inherit: true,
-		  rules: [],
-		  colors: {
-			"editor.background": "#1c1917",
-		  },
+			base: "vs-dark",
+			inherit: true,
+			rules: [],
+			colors: {
+				"editor.background": "#1c1917",
+			},
 		});
-	  
-	})
+	});
+}
 
+export function toOrdinal(num:number) {
+	const s = ["th", "st", "nd", "rd"];
+	const v = num % 100;
+	return num + (s[(v - 20) % 10] || s[v] || s[0]);
 }

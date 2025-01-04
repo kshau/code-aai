@@ -1,23 +1,16 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { auth } from "firebase-admin";
+import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
-// Utility function to generate a random password
-function generateRandomPassword(length: number = 12): string {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-  return Array.from({ length }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length))
-  ).join("");
-}
 
 export async function POST(request: NextRequest) {
   await initAdmin();
-  const fAuth = auth();
+  const Auth = auth();
+  const Firestore = firestore();
 
   try {
     const body = await request.json();
-    const { username } = body;
+    const { username, parentEmail} = body;
 
     if (!username) {
       return NextResponse.json(
@@ -28,18 +21,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const randomPassword = generateRandomPassword();
-    console.log(randomPassword)
 
-    const userRecord = await fAuth.createUser({
-      email:`${username}@codeaai.org`,
-      password: randomPassword,
+    const userRecord = await Auth.createUser({
+      email: `${username}@codeaai.org`,
+      password: "secure123",
     });
+
+    const userDoc = {
+      uid: userRecord.uid,
+      username: username,
+      parentEmail: parentEmail,
+      points:0,
+      solves:0
+    };
+
+    await Firestore.collection("users").doc(userRecord.uid).set(userDoc);
 
     return NextResponse.json({
       message: "User created successfully",
-      user: userRecord,
-      password: randomPassword,
     });
   } catch (err) {
     console.error(err);

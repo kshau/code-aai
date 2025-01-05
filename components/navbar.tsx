@@ -78,8 +78,10 @@ function Navbar({
             <Link
               key={href}
               href={href}
-              className={`relative text-foreground/70 hover:text-blue-500 transition-all ${
-                isActive(href) ? "text-blue-500" : ""
+              className={`relative transition-all ${
+                isActive(href)
+                  ? "text-blue-500"
+                  : "text-foreground/70 hover:text-blue-500"
               }`}
             >
               {label}
@@ -87,21 +89,15 @@ function Navbar({
           ))}
 
           {/* Auth Buttons */}
-          <div className={`flex items-center ${user ? "ml-4" : ""}`}>
-            {status === "loading" ? (
-              <ThreeDots />
+          <div className={`flex items-center`}>
+            {status !== "unauthenticated" ? (
+              <NavbarUserMenu />
             ) : (
-              <div>
-                {user ? (
-                  <NavbarUserMenu />
-                ) : (
-                  <NavbarLoginModal
-                    isLoginOpen={isLoginOpen}
-                    setIsLoginOpen={setIsLoginOpen}
-                    signIn={signIn}
-                  />
-                )}
-              </div>
+              <NavbarLoginModal
+                isLoginOpen={isLoginOpen}
+                setIsLoginOpen={setIsLoginOpen}
+                signIn={signIn}
+              />
             )}
           </div>
         </nav>
@@ -189,7 +185,13 @@ export function NavbarLoginModal({
               required
             />
           </div>
-          <Button type="submit" className="w-full" onClick={() => {signIn(user, password)}}>
+          <Button
+            type="submit"
+            className="w-full"
+            onClick={() => {
+              signIn(user, password);
+            }}
+          >
             Log in
           </Button>
         </form>
@@ -209,7 +211,9 @@ export function NavbarUserMenu() {
           className="rounded-full w-9 h-9"
         >
           <Avatar>
-            <AvatarFallback>{user?.displayName?.charAt(0)}</AvatarFallback>
+            <AvatarFallback>
+              {user ? user?.displayName?.charAt(0) : <ThreeDots />}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

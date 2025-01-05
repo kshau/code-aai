@@ -2,16 +2,20 @@
 
 import ChallengeSection from "@/components/dashboard/challengeSelection";
 import Leaderboard from "@/components/dashboard/leaderboard";
+import ProfileStatistics from "@/components/dashboard/profileStatistics";
 import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
   return (
-    <Navbar>
-      <div className="flex items-center flex-grow flex-wrap gap-6 justify-center m-4">
-        <div className="flex flex-col gap-6">
+    <Navbar className="flex justify-center items-center">
+      <div className="flex justify-center items-center gap-4 h-[80vh]">
+        <div className="flex flex-col gap-4  h-full">
+          <ProfileStatistics />
           <ChallengeSection />
         </div>
-        <Leaderboard />
+        <div className="flex flex-col flex-grow h-full">
+          <Leaderboard />
+        </div>
       </div>
     </Navbar>
   );

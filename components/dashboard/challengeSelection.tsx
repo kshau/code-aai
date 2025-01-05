@@ -18,6 +18,8 @@ export default function ChallengeSection() {
         "A very nice description for a very nice challenges that you should totally solve!",
       difficulty: "easy",
       testCases: [],
+      solved: false,
+      points: 100,
     },
     {
       id: "mango",
@@ -26,6 +28,8 @@ export default function ChallengeSection() {
         "Are you smart enough to be able to add two integers together? Prove it by solving!",
       difficulty: "medium",
       testCases: [],
+      solved: false,
+      points: 100,
     },
     {
       id: "strawberry",
@@ -34,14 +38,26 @@ export default function ChallengeSection() {
         "What do you still remember from your calculus class in high school or college?",
       difficulty: "hard",
       testCases: [],
+      solved: false,
+      points: 100,
+    },
+    {
+      id: "strawberry",
+      title: "Integration",
+      description:
+        "What do you still remember from your calculus class in high school or college?",
+      difficulty: "hard",
+      testCases: [],
+      solved: false,
+      points: 100,
     },
   ]);
 
   return (
-    <ScrollArea className="pr-4">
-      <div className="grid lg:grid-cols-2 gap-4 max-h-[23rem]">
+    <ScrollArea className="flex-grow">
+      <div className="flex flex-col gap-2 h-full">
         {challengesData.map((challenge: Challenge, index) => (
-          <Card className="min-w-64 lg:max-w-96" key={index}>
+          <Card className="max-w-3xl" key={index}>
             <CardHeader className="flex flex-row gap-4">
               <CardTitle>{challenge.title}</CardTitle>
               <Badge

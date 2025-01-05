@@ -37,36 +37,31 @@ export default function Leaderboard() {
   }, []);
 
   return (
-    <Card className="lg:w-fit lg:max-w-[50rem]">
+    <Card className="w-[400px] h-full flex-grow flex-col">
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
       </CardHeader>
-
       <CardContent>
-        {leaderboardData ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Rank</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Solves</TableHead>
-                <TableHead>Points</TableHead>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Rank</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Solves</TableHead>
+              <TableHead>Points</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {leaderboardData?.map((user, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell className="text-left">{user.name}</TableCell>
+                <TableCell>{user.solves}</TableCell>
+                <TableCell>{user.points.toLocaleString()}</TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leaderboardData.map((user, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell className="text-left">{user.name}</TableCell>
-                  <TableCell>{user.solves}</TableCell>
-                  <TableCell>{user.points.toLocaleString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="w-80"></div>
-        )}
+            ))}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );

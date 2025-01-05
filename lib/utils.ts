@@ -20,6 +20,8 @@ export interface Challenge {
 	description: string;
 	difficulty: "easy" | "medium" | "hard";
 	testCases: ChallengeTestCase[];
+	solved:boolean;
+	points:number;
 }
 
 export interface ChallengeTestCase {

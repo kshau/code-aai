@@ -29,7 +29,7 @@ export interface ChallengeTestCase {
 
 export interface ChallengeTestCaseInput {
 	name: string;
-	type: string;
+	type: "string" | "int" | "float" | "boolean";
 	value: any;
 }
 
@@ -61,7 +61,7 @@ export function loadCustomDarkEditorTheme() {
 			inherit: true,
 			rules: [],
 			colors: {
-				"editor.background": "#1c1917",
+				"editor.background": "#020817",
 			},
 		});
 	});

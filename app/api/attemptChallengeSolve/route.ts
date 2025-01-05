@@ -1,53 +1,67 @@
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
+const {RAPIDAPI_API_KEY} = process.env;
+
 interface attemptChallengeData {
-  editorContent: string;
-  challengeId: string;
+	editorContent: string;
+	challengeId: string;
 }
 
 export async function POST(request: NextRequest) {
-  const { editorContent, challengeId }: attemptChallengeData = await request.json();
 
-  const url = 'https://onecompiler-apis.p.rapidapi.com/api/v1/run';
-  const options = {
-    method: 'POST',
-    headers: {
-     'x-rapidapi-key': '',
-      'x-rapidapi-host': 'onecompiler-apis.p.rapidapi.com',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      language: 'python',
-      files: [
-        {
-          name: 'index.py',
-          content: editorContent, 
-        },
-      ],
-    }),
-  };
+	const { editorContent, challengeId }: attemptChallengeData = await request.json();
 
-  try {
-    const response = await fetch(url, options);
-    
-    if (!response.ok) {
-      throw new Error(`API call failed with status: ${response.status}`);
-    }
+	try {
 
-    const data = await response.json();
-    
-    return NextResponse.json({
-      codeOutput: data.stdout || 'No output received',
-      producedError: data.stderr || false,
-    }, { status: 200 });
+		const res = await axios.post(
+			"https://onecompiler-apis.p.rapidapi.com/api/v1/run",
+			{
+				language: "python",
+				files: [
+					{
+						name: "index.py",
+						content: editorContent,
+					},
+				],
+			},
+			{
+				headers: {
+					"x-rapidapi-key": RAPIDAPI_API_KEY,
+					"x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
-  } catch (error:any) {
-    console.error("Error executing the code:", error);
+		const { stdout, stderr } = res.data;
 
-    return NextResponse.json({
-      codeOutput: '',
-      producedError: true,
-      errorMessage: error.message,
-    }, { status: 500 });
-  }
+		console.log(stderr)
+
+		return NextResponse.json(
+			{
+				codeOutput: stdout || stderr,
+				producedError: stderr != null,
+				failedTestCase: {
+					inputs: [
+						{
+							name: "number", 
+							type: "int", 
+							value: 17
+						}, 
+						{
+							name: "length", 
+							type: "int", 
+							value: 2
+						}, 
+					], 
+					expectedOutput: "20", 
+					recievedOutput: "25"
+				}
+			},
+			{ status: 200 }
+		);
+	} catch (err) {
+		console.error(err);
+	}
 }

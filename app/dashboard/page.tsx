@@ -6,7 +6,7 @@ import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
   return (
-    <Navbar protectedRoute={true}>
+    <Navbar>
       <div className="flex items-center flex-grow flex-wrap gap-6 justify-center m-4">
         <div className="flex flex-col gap-6">
           <ChallengeSection />

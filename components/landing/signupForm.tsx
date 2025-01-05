@@ -16,39 +16,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toOrdinal, UserSignupRequestData } from "@/lib/utils";
 import { useFirestore } from "@/lib/firebase/useFirestore";
 
+const defaultForm: UserSignupRequestData = {
+  username: "",
+  gradeLevel: 9,
+  parentEmail: "",
+  codingExperience: "beginner",
+};
+
 export default function SignupForm() {
   const [userSignupRequestData, setUserSignupRequestData] =
-    useState<UserSignupRequestData>({
-      username: "",
-      gradeLevel: 9,
-      email: "",
-      codingExperience: "beginner",
-    });
+    useState<UserSignupRequestData>(defaultForm);
   const [alertMessage, setAlertMessage] = useState("");
   const { createDocument } = useFirestore();
 
   const handleSignupFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (
-      !userSignupRequestData.username ||
-      !userSignupRequestData.email ||
-      userSignupRequestData.gradeLevel == null ||
-      !userSignupRequestData.codingExperience
-    ) {
-      setAlertMessage("Please fill out all fields.");
+    if (userSignupRequestData.username.includes(" ")) {
+      setAlertMessage("Username cannot contain spaces.");
+      return;
+    }
+    if (userSignupRequestData.username.includes("@")) {
+      setAlertMessage("Username cannot include an @");
+      return;
+    }
+    if (userSignupRequestData.username.includes("^")) {
+      setAlertMessage("Username cannot include an ^");
       return;
     }
 
     await createDocument("signup-requests", userSignupRequestData);
 
-    setAlertMessage("Signup successful!");
-    setUserSignupRequestData({
-      username: "",
-      gradeLevel: 9,
-      email: "",
-      codingExperience: "beginner",
-    });
+    setAlertMessage(
+      "Signup successful! Check your parent email once you are approved in!"
+    );
+    setUserSignupRequestData(defaultForm);
   };
 
   return (
@@ -101,6 +102,7 @@ export default function SignupForm() {
                   username: e.target.value,
                 })
               }
+              type="text"
               placeholder="Enter a username"
               required
             />
@@ -110,13 +112,14 @@ export default function SignupForm() {
             <Label>Parent Email</Label>
             <Input
               id="email"
-              value={userSignupRequestData?.email}
+              value={userSignupRequestData?.parentEmail}
               onChange={(e) =>
                 setUserSignupRequestData({
                   ...userSignupRequestData,
-                  email: e.target.value,
+                  parentEmail: e.target.value,
                 })
               }
+              type="email"
               placeholder="Enter your parent email"
               required
             />
@@ -158,12 +161,9 @@ export default function SignupForm() {
             Sign Up
           </Button>
         </form>
-
-        {alertMessage && (
-          <span className="mt-4 text-center text-red-600 text-sm font-semibold">
-            {alertMessage}
-          </span>
-        )}
+        <span className="h-4 mt-4 w-full flex justify-center items-center  text-sm font-semibold">
+          {alertMessage}
+        </span>
       </CardContent>
     </Card>
   );

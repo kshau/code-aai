@@ -9,7 +9,7 @@ import { ChallengeEditor } from "@/components/admin/challengeEditor";
 
 export default function Admin() {
   return (
-    <Navbar className="flex justify-center items-center" protectedRoute>
+    <Navbar className="flex justify-center items-center">
       <Tabs
         defaultValue="signup-reuqests"
         className="flex flex-col items-center"

@@ -18,9 +18,9 @@ export interface User {
 
 
 export interface UserSignupRequestData {
-	name: string;
+	username: string;
 	gradeLevel: number;
-	email: string;
+	parentEmail: string;
 	codingExperience: "beginner" | "intermediate" | "advanced";
 }
 

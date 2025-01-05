@@ -42,6 +42,17 @@ export function SignupRequests() {
     fetchSignupRequests();
   }, [getDocuments]);
 
+  const deleteRequest = async (
+    userSignupRequestData: UserSignupRequestDataDocument
+  ) => {
+    await deleteDocument("signup-requests", userSignupRequestData.id);
+
+    const updatedRequests = userSignupRequestsData.filter(
+      (request) => request.id !== userSignupRequestData.id
+    );
+    setUserSignupRequestsData(updatedRequests);
+  };
+
   const createUser = async (
     userSignupRequestData: UserSignupRequestDataDocument
   ) => {
@@ -54,18 +65,14 @@ export function SignupRequests() {
       },
       body: JSON.stringify({
         username,
+        parentEmail: userSignupRequestData.parentEmail,
         gradeLevel: userSignupRequestData.gradeLevel,
         codingExperience: userSignupRequestData.codingExperience,
       }),
     });
 
     if (response.status == 200) {
-      await deleteDocument("signup-requests", userSignupRequestData.id);
-
-      const updatedRequests = userSignupRequestsData.filter(
-        (request) => request.id !== userSignupRequestData.id
-      );
-      setUserSignupRequestsData(updatedRequests);
+      deleteRequest(userSignupRequestData);
     }
   };
 
@@ -79,7 +86,7 @@ export function SignupRequests() {
                 <TableHead>Document ID</TableHead>{" "}
                 {/* Add header for Document ID */}
                 <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Parent Email</TableHead>
                 <TableHead>Grade Level</TableHead>
                 <TableHead>Coding Experience</TableHead>
                 <TableHead>Action</TableHead>
@@ -97,7 +104,7 @@ export function SignupRequests() {
                       {userSignupRequestData.username || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {userSignupRequestData.email || "N/A"}
+                      {userSignupRequestData.parentEmail || "N/A"}
                     </TableCell>
                     <TableCell>
                       {userSignupRequestData.gradeLevel || "N/A"}
@@ -105,9 +112,15 @@ export function SignupRequests() {
                     <TableCell>
                       {userSignupRequestData.codingExperience || "N/A"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex gap-2">
                       <Button onClick={() => createUser(userSignupRequestData)}>
                         Accept
+                      </Button>
+                      <Button
+                        onClick={() => deleteRequest(userSignupRequestData)}
+                        variant={"destructive"}
+                      >
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>

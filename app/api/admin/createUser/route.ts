@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { username, parentEmail, codingExperience, gradeLevel} = body;
+    console.log(username, parentEmail, codingExperience, gradeLevel)
 
     if (!username) {
       return NextResponse.json(
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
       email: `${username}@codeaai.org`,
       password: "secure123",
     });
+
 
     const userDoc : User = {
       uid: userRecord.uid,

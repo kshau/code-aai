@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Challenge } from "@/lib/utils";
 import Link from "next/link";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, SearchIcon } from "lucide-react";
+import { Input } from "../ui/input";
 
 export default function ChallengeSection() {
   const [challengesData, setChallengesData] = useState<Challenge[]>([
@@ -51,11 +52,35 @@ export default function ChallengeSection() {
       solved: false,
       points: 100,
     },
+    {
+      id: "strawberry",
+      title: "Integration",
+      description:
+        "What do you still remember from your calculus class in high school or college?",
+      difficulty: "hard",
+      testCases: [],
+      solved: false,
+      points: 100,
+    },
+    {
+      id: "strawberry",
+      title: "Integration",
+      description:
+        "What do you still remember from your calculus class in high school or college?",
+      difficulty: "hard",
+      testCases: [],
+      solved: false,
+      points: 100,
+    },
   ]);
 
   return (
-    <ScrollArea className="flex-grow">
-      <div className="flex flex-col gap-2 h-full">
+    <ScrollArea className="flex-grow pr-4">
+      <div className="flex flex-row border-[1px] rounded-md mb-2">
+        <SearchIcon className="my-auto m-2"/>
+        <Input placeholder="Search for a challenge" className="border-none p-1"/>
+      </div>
+      <div className="grid lg:grid-cols-2 gap-2 h-full max-w-[50rem] max-h-[40vh]">
         {challengesData.map((challenge: Challenge, index) => (
           <Card className="max-w-3xl" key={index}>
             <CardHeader className="flex flex-row gap-4">

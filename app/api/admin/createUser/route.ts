@@ -1,4 +1,5 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
+import { User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { username, parentEmail} = body;
+    const { username, parentEmail, codingExperience, gradeLevel} = body;
 
     if (!username) {
       return NextResponse.json(
@@ -27,12 +28,14 @@ export async function POST(request: NextRequest) {
       password: "secure123",
     });
 
-    const userDoc = {
+    const userDoc : User = {
       uid: userRecord.uid,
       username: username,
       parentEmail: parentEmail,
       points:0,
-      solves:0
+      solves:0,
+      codingExperience:codingExperience,
+      gradeLevel:gradeLevel
     };
 
     await Firestore.collection("users").doc(userRecord.uid).set(userDoc);

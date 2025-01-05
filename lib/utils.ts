@@ -6,13 +6,24 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+export interface User {
+	uid: string;
+	username: string;
+	gradeLevel: number;
+	parentEmail: string;
+	solves:number;
+	points:number;
+	codingExperience: "beginner" | "intermediate" | "advanced";
+}
+
+
 export interface UserSignupRequestData {
-	id?: string;
 	name: string;
-	gradeLevel: number | null;
+	gradeLevel: number;
 	email: string;
 	codingExperience: "beginner" | "intermediate" | "advanced";
 }
+
 
 export interface Challenge {
 	id: string | null;

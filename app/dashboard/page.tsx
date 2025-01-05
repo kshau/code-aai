@@ -7,7 +7,7 @@ import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
   return (
-    <Navbar className="flex justify-center items-center">
+    <Navbar className="flex justify-center items-center" protectedRoute>
       <div className="flex justify-center items-center gap-4 h-[80vh]">
         <div className="flex flex-col gap-4  h-full">
           <ProfileStatistics />

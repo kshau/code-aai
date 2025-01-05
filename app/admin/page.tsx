@@ -9,34 +9,32 @@ import { ChallengeEditor } from "@/components/admin/challengeEditor";
 
 export default function Admin() {
   return (
-    <Navbar>
-      <div className="flex flex-col items-center justify-center mt-4 h-full">
-        <Tabs
-          defaultValue="signup-reuqests"
-          className="flex flex-col items-center"
-        >
-          <TabsList className="w-fit">
-            <TabsTrigger value="signup-reuqests">Signup Requests</TabsTrigger>
-            <TabsTrigger value="create-challenge">Create Challenge</TabsTrigger>
-            <TabsTrigger value="edit-user">Edit User</TabsTrigger>
-            <TabsTrigger value="edit-challenge">Edit Challenge</TabsTrigger>
-          </TabsList>
-          <div className="h-96 w-[50vw]">
-            <TabsContent value="signup-reuqests">
-              <SignupRequests />
-            </TabsContent>
-            <TabsContent value="create-challenge">
-              <ChallengeEditor />
-            </TabsContent>
-            <TabsContent value="edit-user">
-              <Editor height="30rem" defaultLanguage="json" />
-            </TabsContent>
-            <TabsContent value="edit-challenge">
-              <Editor height="30rem" defaultLanguage="json" />
-            </TabsContent>
-          </div>
-        </Tabs>
-      </div>
+    <Navbar className="flex justify-center items-center" protectedRoute>
+      <Tabs
+        defaultValue="signup-reuqests"
+        className="flex flex-col items-center"
+      >
+        <TabsList className="w-fit">
+          <TabsTrigger value="signup-reuqests">Signup Requests</TabsTrigger>
+          <TabsTrigger value="create-challenge">Create Challenge</TabsTrigger>
+          <TabsTrigger value="edit-user">Edit User</TabsTrigger>
+          <TabsTrigger value="edit-challenge">Edit Challenge</TabsTrigger>
+        </TabsList>
+        <div className="h-96 w-[50vw]">
+          <TabsContent value="signup-reuqests">
+            <SignupRequests />
+          </TabsContent>
+          <TabsContent value="create-challenge">
+            <ChallengeEditor />
+          </TabsContent>
+          <TabsContent value="edit-user">
+            <Editor height="30rem" defaultLanguage="json" />
+          </TabsContent>
+          <TabsContent value="edit-challenge">
+            <Editor height="30rem" defaultLanguage="json" />
+          </TabsContent>
+        </div>
+      </Tabs>
     </Navbar>
   );
 }

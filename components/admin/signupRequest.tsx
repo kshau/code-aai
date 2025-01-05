@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-interface UserSignupRequestDataDocument extends Partial<UserSignupRequestData> {
+interface UserSignupRequestDataDocument extends UserSignupRequestData {
   id: string;
 }
 export function SignupRequests() {
@@ -43,24 +43,27 @@ export function SignupRequests() {
   }, [getDocuments]);
 
   const createUser = async (
-    name: string,
-    parentEmail: string,
-    requestDocumentId: string
+    userSignupRequestData: UserSignupRequestDataDocument
   ) => {
-    let username = name.replaceAll(" ", ".");
+    let username = userSignupRequestData.username.replaceAll(" ", ".");
+
     const response = await fetch("/api/admin/createUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, parentEmail }),
+      body: JSON.stringify({
+        username,
+        gradeLevel: userSignupRequestData.gradeLevel,
+        codingExperience: userSignupRequestData.codingExperience,
+      }),
     });
 
     if (response.status == 200) {
-      await deleteDocument("signup-requests", requestDocumentId);
+      await deleteDocument("signup-requests", userSignupRequestData.id);
 
       const updatedRequests = userSignupRequestsData.filter(
-        (request) => request.id !== requestDocumentId
+        (request) => request.id !== userSignupRequestData.id
       );
       setUserSignupRequestsData(updatedRequests);
     }
@@ -90,7 +93,9 @@ export function SignupRequests() {
                 ) => (
                   <TableRow key={index}>
                     <TableCell>{userSignupRequestData.id || "N/A"}</TableCell>
-                    <TableCell>{userSignupRequestData.name || "N/A"}</TableCell>
+                    <TableCell>
+                      {userSignupRequestData.username || "N/A"}
+                    </TableCell>
                     <TableCell>
                       {userSignupRequestData.email || "N/A"}
                     </TableCell>
@@ -101,15 +106,7 @@ export function SignupRequests() {
                       {userSignupRequestData.codingExperience || "N/A"}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        onClick={() =>
-                          createUser(
-                            userSignupRequestData.name!,
-                            userSignupRequestData.email!,
-                            userSignupRequestData.id
-                          )
-                        }
-                      >
+                      <Button onClick={() => createUser(userSignupRequestData)}>
                         Accept
                       </Button>
                     </TableCell>

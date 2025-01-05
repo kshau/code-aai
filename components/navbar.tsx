@@ -54,7 +54,7 @@ function Navbar({
   const isActive = (href: string) => path === href;
 
   useEffect(() => {
-    if (protectedRoute && status != "authenticated") {
+    if (protectedRoute && status == "unauthenticated") {
       router.push("/");
     }
   }, [status]);

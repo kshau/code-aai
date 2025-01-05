@@ -16,7 +16,7 @@ import {
 } from "./ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/firebase/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
   DialogContent,

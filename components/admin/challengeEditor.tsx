@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useFirestore } from "@/lib/firebase/useFirestore";
+import { useFirestore } from "@/hooks/useFirestore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Editor } from "@monaco-editor/react";
+import { useToast } from "@/hooks/use-toast";
 
 const defaultJson = `{
   "name": "Example Challenge",
@@ -25,8 +26,9 @@ const defaultJson = `{
 }`;
 
 export function ChallengeEditor() {
-  const { createDocument } = useFirestore();
+  const { queryDocuments, createDocument } = useFirestore();
   const [editorValue, setEditorValue] = useState(defaultJson);
+  const { toast } = useToast();
 
   const handleEditorChange = (value: string | undefined) => {
     if (value) {
@@ -34,13 +36,33 @@ export function ChallengeEditor() {
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     try {
       const parsedData = JSON.parse(editorValue);
+      const name = parsedData["name"] || "untiled";
+
+      const challenges = await queryDocuments("challenges", "name", name);
+      if (challenges.length > 0) {
+        toast({
+          title: "Failed to create challenge",
+          description: "Challenge name exists already",
+          variant: "destructive",
+        });
+        return;
+      }
+
       createDocument("challenges", parsedData);
-    } catch (error) {
-      console.error("Invalid JSON:", error);
-      alert("The JSON is not valid. Please fix it before saving.");
+      toast({
+        title: "Success",
+        description: "Challenge has been made",
+        variant: "default",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to create challenge",
+        description: error.message || "Failed to create challenge",
+        variant: "destructive",
+      });
     }
   };
 
@@ -53,6 +75,14 @@ export function ChallengeEditor() {
         onChange={handleEditorChange} // Capture changes in the editor
       />
       <Button onClick={handleCreate}>Create</Button>
+      <Button
+        onClick={() => {
+          setEditorValue(defaultJson);
+        }}
+        className="ml-2"
+      >
+        Reset
+      </Button>
     </Card>
   );
 }

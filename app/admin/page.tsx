@@ -17,8 +17,6 @@ export default function Admin() {
         <TabsList className="w-fit">
           <TabsTrigger value="signup-reuqests">Signup Requests</TabsTrigger>
           <TabsTrigger value="create-challenge">Create Challenge</TabsTrigger>
-          <TabsTrigger value="edit-user">Edit User</TabsTrigger>
-          <TabsTrigger value="edit-challenge">Edit Challenge</TabsTrigger>
         </TabsList>
         <div className="h-96 w-[50vw]">
           <TabsContent value="signup-reuqests">

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toOrdinal, UserSignupRequestData } from "@/lib/utils";
-import { useFirestore } from "@/lib/firebase/useFirestore";
+import { useFirestore } from "@/hooks/useFirestore";
 
 const defaultForm: UserSignupRequestData = {
   username: "",

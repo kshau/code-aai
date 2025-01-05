@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { UserSignupRequestData } from "@/lib/utils";
-import { useFirestore } from "@/lib/firebase/useFirestore";
+import { useFirestore } from "@/hooks/useFirestore";
 import {
   Table,
   TableBody,
@@ -13,15 +13,18 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserSignupRequestDataDocument extends UserSignupRequestData {
   id: string;
 }
+
 export function SignupRequests() {
   const [userSignupRequestsData, setUserSignupRequestsData] = useState<
     UserSignupRequestDataDocument[]
   >([]);
   const { getDocuments, deleteDocument } = useFirestore();
+  const { toast } = useToast();
 
   const fetchSignupRequests = async () => {
     try {
@@ -35,6 +38,11 @@ export function SignupRequests() {
       setUserSignupRequestsData(documentsWithIds);
     } catch (error) {
       console.error("Error fetching user signup requests: ", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch signup requests.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -45,12 +53,26 @@ export function SignupRequests() {
   const deleteRequest = async (
     userSignupRequestData: UserSignupRequestDataDocument
   ) => {
-    await deleteDocument("signup-requests", userSignupRequestData.id);
+    try {
+      await deleteDocument("signup-requests", userSignupRequestData.id);
 
-    const updatedRequests = userSignupRequestsData.filter(
-      (request) => request.id !== userSignupRequestData.id
-    );
-    setUserSignupRequestsData(updatedRequests);
+      const updatedRequests = userSignupRequestsData.filter(
+        (request) => request.id !== userSignupRequestData.id
+      );
+      setUserSignupRequestsData(updatedRequests);
+
+      toast({
+        title: "Success",
+        description: "Request deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting request: ", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete request.",
+        variant: "destructive",
+      });
+    }
   };
 
   const createUser = async (
@@ -58,38 +80,67 @@ export function SignupRequests() {
   ) => {
     let username = userSignupRequestData.username.replaceAll(" ", ".");
 
-    const response = await fetch("/api/admin/createUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        parentEmail: userSignupRequestData.parentEmail,
-        gradeLevel: userSignupRequestData.gradeLevel,
-        codingExperience: userSignupRequestData.codingExperience,
-      }),
-    });
+    try {
+      const response = await fetch("/api/admin/createUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          parentEmail: userSignupRequestData.parentEmail,
+          gradeLevel: userSignupRequestData.gradeLevel,
+          codingExperience: userSignupRequestData.codingExperience,
+        }),
+      });
 
-    if (response.status == 200) {
-      deleteRequest(userSignupRequestData);
+      if (response.ok) {
+        await deleteRequest(userSignupRequestData);
+        toast({
+          title: "Success",
+          description: "User created successfully.",
+        });
+      } else {
+        throw new Error("Failed to create user");
+      }
+    } catch (error) {
+      console.error("Error creating user: ", error);
+      toast({
+        title: "Error",
+        description: "Failed to create user.",
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <Card className="w-full h-96 flex justify-center items-center">
-      <CardContent>
+    <Card className="w-full h-96">
+      <CardHeader>
+        <CardTitle>Signup Requests</CardTitle>
+      </CardHeader>
+      <CardContent className="h-[calc(100%-4rem)] overflow-auto">
         {userSignupRequestsData.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Document ID</TableHead>{" "}
-                {/* Add header for Document ID */}
-                <TableHead>Name</TableHead>
-                <TableHead>Parent Email</TableHead>
-                <TableHead>Grade Level</TableHead>
-                <TableHead>Coding Experience</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Document ID
+                </TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Name
+                </TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Parent Email
+                </TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Grade Level
+                </TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Coding Experience
+                </TableHead>
+                <TableHead className="sticky top-0 bg-background">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "../ui/card";
-import { useFirestore } from "@/lib/firebase/useFirestore";
-import { useAuth } from "@/lib/firebase/useAuth";
+import { useFirestore } from "@/hooks/useFirestore";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfileStatistics() {
   const { queryDocuments } = useFirestore();

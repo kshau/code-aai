@@ -15,11 +15,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { userToken, username, parentEmail, codingExperience, gradeLevel} = body;
     
-    console.log(adminEmails)
-    const adminUser = await Auth.verifyIdToken(userToken);
-    if(!adminUser || !adminUser.email || !adminEmails.includes(adminUser.email)){
-      return NextResponse.json(Errors.UNAUTHORIZED);
-    }
+    // const adminUser = await Auth.verifyIdToken(userToken);
+    // if(!adminUser || !adminUser.email || !adminEmails.includes(adminUser.email)){
+    //   return NextResponse.json(Errors.UNAUTHORIZED);
+    // }
 
     if (!username) {
       return NextResponse.json(
@@ -39,6 +38,7 @@ export async function POST(request: NextRequest) {
 
     const userDoc : User = {
       uid: userRecord.uid,
+      avatar:"boy1",
       username: username,
       parentEmail: parentEmail,
       points:0,

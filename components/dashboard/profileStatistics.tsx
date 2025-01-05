@@ -11,7 +11,7 @@ export default function ProfileStatistics() {
   const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUser = async () => {
       if (user?.uid) {
         try {
           const userData = await getUserData(user.uid);
@@ -22,7 +22,7 @@ export default function ProfileStatistics() {
       }
     };
 
-    fetchUsers();
+    fetchUser();
   }, [status, user?.uid]);
 
   return (

@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export interface User {
 	uid: string;
+	avatar: "boy1" | "boy2" | "girl1" | "girl2";
 	username: string;
 	gradeLevel: number;
 	parentEmail: string;

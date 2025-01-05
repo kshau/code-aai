@@ -13,7 +13,6 @@ interface attemptChallengeData {
 export async function POST(request: NextRequest) {
 	const Auth = auth();
 	const Firestore = firestore();
-
 	const { editorContent, userToken, challengeId }: attemptChallengeData = await request.json();
 
     const user = await Auth.verifyIdToken(userToken);

@@ -31,6 +31,9 @@ import Image from "next/image";
 import logo from "@/public/logo.png";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { useFirestore } from "@/hooks/useFirestore";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { User } from "@/lib/utils";
 
 const links = [
   { href: "/#about", label: "About Us" },
@@ -48,6 +51,7 @@ function Navbar({
   protectedRoute?: boolean;
 }) {
   const { user, status, signIn, logOut } = useAuth();
+
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const path = usePathname();
   const router = useRouter();
@@ -201,7 +205,24 @@ export function NavbarLoginModal({
 }
 
 export function NavbarUserMenu() {
-  const { user, logOut } = useAuth();
+  const { user, logOut, status } = useAuth();
+  const { getUserData } = useFirestore();
+  const [userData, setUserData] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (user?.uid) {
+        try {
+          const userData = await getUserData(user.uid);
+          setUserData(userData);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+      }
+    };
+    fetchUser();
+  }, [status, user]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -211,6 +232,12 @@ export function NavbarUserMenu() {
           className="rounded-full w-9 h-9"
         >
           <Avatar>
+            <AvatarImage
+              src={`${
+                userData?.avatar ? `/avatars/${userData.avatar}.svg` : ""
+              }`}
+              alt="pfp"
+            />
             <AvatarFallback>
               {user ? user?.displayName?.charAt(0) : <Loading />}
             </AvatarFallback>

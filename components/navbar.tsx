@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { LoadingPage, ThreeDots } from "./loading";
+import { LoadingPage, Loading } from "./loading";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -212,7 +212,7 @@ export function NavbarUserMenu() {
         >
           <Avatar>
             <AvatarFallback>
-              {user ? user?.displayName?.charAt(0) : <ThreeDots />}
+              {user ? user?.displayName?.charAt(0) : <Loading />}
             </AvatarFallback>
           </Avatar>
         </Button>

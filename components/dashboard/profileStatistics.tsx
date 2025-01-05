@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useAuth } from "@/hooks/useAuth";
+import { User } from "@/lib/utils";
+import { Loading } from "../loading";
 
 export default function ProfileStatistics() {
-  const { queryDocuments } = useFirestore();
   const { user, status } = useAuth();
-  const [userData, setUserData] = useState<any>(12);
+  const { getUserData } = useFirestore();
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       if (user?.uid) {
         try {
-          const users = await queryDocuments("users", "uid", user.uid);
+          const userData = await getUserData(user.uid);
+          setUserData(userData);
         } catch (error) {
           console.error("Error fetching users:", error);
         }
@@ -25,10 +28,10 @@ export default function ProfileStatistics() {
   return (
     <div className="flex w-full h-60 gap-2">
       <Card className="flex-grow flex items-center justify-center ">
-        Chart 1
+        {userData ? userData.points : <Loading />}
       </Card>
       <Card className="flex-grow flex items-center justify-center ">
-        Chart 2
+        {userData ? userData.username : <Loading />}
       </Card>
     </div>
   );

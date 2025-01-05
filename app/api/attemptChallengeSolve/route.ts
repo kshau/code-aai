@@ -1,4 +1,5 @@
 import axios from "axios";
+import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 const {RAPIDAPI_API_KEY} = process.env;
@@ -6,11 +7,19 @@ const {RAPIDAPI_API_KEY} = process.env;
 interface attemptChallengeData {
 	editorContent: string;
 	challengeId: string;
+	userToken: string;
 }
 
 export async function POST(request: NextRequest) {
+	const Auth = auth();
+	const Firestore = firestore();
 
-	const { editorContent, challengeId }: attemptChallengeData = await request.json();
+	const { editorContent, userToken, challengeId }: attemptChallengeData = await request.json();
+
+    const user = await Auth.verifyIdToken(userToken);
+    if(!user || !user.email){
+      return NextResponse.json(Errors.UNAUTHORIZED);
+    }
 
 	try {
 
@@ -36,7 +45,6 @@ export async function POST(request: NextRequest) {
 
 		const { stdout, stderr } = res.data;
 
-		console.log(stderr)
 
 		return NextResponse.json(
 			{
@@ -61,7 +69,16 @@ export async function POST(request: NextRequest) {
 			},
 			{ status: 200 }
 		);
-	} catch (err) {
+	} catch (err:any) {
 		console.error(err);
+
+
+		return NextResponse.json(
+			{
+				error:err.message
+			},
+			{ status: 500 }
+		);
+
 	}
 }

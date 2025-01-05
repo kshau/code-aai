@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserSignupRequestDataDocument extends UserSignupRequestData {
   id: string;
@@ -25,6 +26,7 @@ export function SignupRequests() {
   >([]);
   const { getDocuments, deleteDocument } = useFirestore();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchSignupRequests = async () => {
     try {
@@ -78,8 +80,8 @@ export function SignupRequests() {
   const createUser = async (
     userSignupRequestData: UserSignupRequestDataDocument
   ) => {
-    let username = userSignupRequestData.username.replaceAll(" ", ".");
-
+    const username = userSignupRequestData.username;
+    const userToken = await user?.getIdToken();
     try {
       const response = await fetch("/api/admin/createUser", {
         method: "POST",
@@ -87,6 +89,7 @@ export function SignupRequests() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userToken,
           username,
           parentEmail: userSignupRequestData.parentEmail,
           gradeLevel: userSignupRequestData.gradeLevel,

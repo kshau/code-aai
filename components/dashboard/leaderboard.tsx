@@ -10,26 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LeaderboardUser } from "@/lib/utils";
+import { useFirestore } from "@/hooks/useFirestore";
+import { User } from "@/lib/utils";
 
 export default function Leaderboard() {
-  const [leaderboardData, setLeaderboardData] = useState<
-    LeaderboardUser[] | null
-  >(null);
+  const [leaderboardData, setLeaderboardData] = useState<User[] | null>(null);
+  const { getDocuments } = useFirestore();
 
   const getLeaderboard = async () => {
-    setLeaderboardData([
-      {
-        name: "Shaurya Kumar",
-        solves: 25,
-        points: 69420,
-      },
-      {
-        name: "Keshav Shah",
-        solves: 23,
-        points: 68420,
-      },
-    ]);
+    const users: User[] = await getDocuments<User>("users");
+    setLeaderboardData(users);
   };
 
   useEffect(() => {
@@ -55,8 +45,8 @@ export default function Leaderboard() {
             {leaderboardData?.map((user, index) => (
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell className="text-left">{user.name}</TableCell>
-                <TableCell>{user.solves}</TableCell>
+                <TableCell className="text-left">{user.username}</TableCell>
+                <TableCell>{user.solvedChallengeIds.length}</TableCell>
                 <TableCell>{user.points.toLocaleString()}</TableCell>
               </TableRow>
             ))}

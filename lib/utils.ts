@@ -11,7 +11,7 @@ export interface User {
 	username: string;
 	gradeLevel: number;
 	parentEmail: string;
-	solves:number;
+	solvedChallengeIds:string[];
 	points:number;
 	codingExperience: "beginner" | "intermediate" | "advanced";
 }
@@ -26,8 +26,8 @@ export interface UserSignupRequestData {
 
 
 export interface Challenge {
-	id: string | null;
-	title: string;
+	id: string;
+	name: string;
 	description: string;
 	difficulty: "easy" | "medium" | "hard";
 	testCases: ChallengeTestCase[];
@@ -46,11 +46,6 @@ export interface ChallengeTestCaseInput {
 	value: any;
 }
 
-export interface LeaderboardUser {
-	name: string;
-	solves: number;
-	points: number;
-}
 
 export function formatChallengeTestCaseInputName(inputName: string) {
 	let newInputName = inputName.replace(/[^a-zA-Z0-9_]/g, "_");

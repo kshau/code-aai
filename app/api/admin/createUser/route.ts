@@ -3,16 +3,23 @@ import { User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
+const {ADMIN_EMAILS} = process.env;
 
 export async function POST(request: NextRequest) {
   await initAdmin();
   const Auth = auth();
   const Firestore = firestore();
+  const adminEmails = ADMIN_EMAILS ? ADMIN_EMAILS.split(',') : [];
 
   try {
     const body = await request.json();
-    const { username, parentEmail, codingExperience, gradeLevel} = body;
-    console.log(username, parentEmail, codingExperience, gradeLevel)
+    const { userToken, username, parentEmail, codingExperience, gradeLevel} = body;
+    
+    console.log(adminEmails)
+    const adminUser = await Auth.verifyIdToken(userToken);
+    if(!adminUser || !adminUser.email || !adminEmails.includes(adminUser.email)){
+      return NextResponse.json(Errors.UNAUTHORIZED);
+    }
 
     if (!username) {
       return NextResponse.json(
@@ -35,7 +42,7 @@ export async function POST(request: NextRequest) {
       username: username,
       parentEmail: parentEmail,
       points:0,
-      solves:0,
+      solvedChallengeIds:[],
       codingExperience:codingExperience,
       gradeLevel:gradeLevel
     };

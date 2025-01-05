@@ -14,6 +14,7 @@ import {
   DocumentData,
   WithFieldValue,
 } from "firebase/firestore";
+import { User } from "@/lib/utils";
 
 interface FirestoreContextType {
   getDocuments: <T>(collectionName: string) => Promise<T[]>;
@@ -31,6 +32,7 @@ interface FirestoreContextType {
     collectionName: string,
     data: WithFieldValue<T>
   ) => Promise<void>;
+  getUserData: (uid: string) => Promise<User>;
 }
 
 export const FirestoreContext = createContext<FirestoreContextType | undefined>(
@@ -56,6 +58,11 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
   };
+
+  async function getUserData(uid: string) {
+    const users = await queryDocuments<User>("users", "uid", uid);
+    return users[0];
+  }
 
   const getDocument = async <T,>(
     collectionName: string,
@@ -145,6 +152,7 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
         queryDocuments,
         createDocument,
         deleteDocument,
+        getUserData,
       }}
     >
       {children}

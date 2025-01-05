@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Editor } from "@monaco-editor/react";
 import { useToast } from "@/hooks/use-toast";
+import { Challenge } from "@/lib/utils";
 
 const defaultJson = `{
   "name": "Example Challenge",
@@ -38,20 +39,26 @@ export function ChallengeEditor() {
 
   const handleCreate = async () => {
     try {
-      const parsedData = JSON.parse(editorValue);
-      const name = parsedData["name"] || "untiled";
+      let parsedData = JSON.parse(editorValue);
+      parsedData["id"] = parsedData["name"].toLowerCase().replaceAll(" ", "-");
 
-      const challenges = await queryDocuments("challenges", "name", name);
+      const challengeData: Challenge = parsedData as Challenge;
+
+      const challenges = await queryDocuments(
+        "challenges",
+        "id",
+        challengeData.id
+      );
       if (challenges.length > 0) {
         toast({
           title: "Failed to create challenge",
-          description: "Challenge name exists already",
+          description: "Challenge with same name exists already",
           variant: "destructive",
         });
         return;
       }
 
-      createDocument("challenges", parsedData);
+      createDocument<Challenge>("challenges", challengeData);
       toast({
         title: "Success",
         description: "Challenge has been made",

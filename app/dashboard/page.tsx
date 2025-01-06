@@ -3,7 +3,7 @@
 import ChallengeSection from "@/components/dashboard/challengeSelection";
 import Leaderboard from "@/components/dashboard/leaderboard";
 import ProfileStatistics from "@/components/dashboard/profileStatistics";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 export default function Dashboard() {
   return (

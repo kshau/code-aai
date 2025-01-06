@@ -8,11 +8,14 @@ import {
   doc,
   deleteDoc,
   getDoc,
+  updateDoc,
   query,
   where,
   QuerySnapshot,
   DocumentData,
   WithFieldValue,
+  UpdateData,
+  DocumentReference,
 } from "firebase/firestore";
 import { User } from "@/lib/utils";
 
@@ -32,7 +35,13 @@ interface FirestoreContextType {
     collectionName: string,
     data: WithFieldValue<T>
   ) => Promise<void>;
+  editDocument: <T extends DocumentData>(
+    collectionName: string,
+    documentId: string,
+    data: UpdateData<T>
+  ) => Promise<void>;
   getUserData: (uid: string) => Promise<User>;
+  editUserData: (uid: string, data: Partial<User>) => Promise<void>;
 }
 
 export const FirestoreContext = createContext<FirestoreContextType | undefined>(
@@ -128,6 +137,45 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const editDocument = async <T extends DocumentData>(
+    collectionName: string,
+    documentId: string,
+    data: UpdateData<T>
+  ): Promise<void> => {
+    try {
+      const docRef = doc(
+        firestore,
+        collectionName,
+        documentId
+      ) as DocumentReference<DocumentData, T>;
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error(
+        `Error updating document in collection '${collectionName}':`,
+        error
+      );
+      throw error;
+    }
+  };
+
+  const editUserData = async (
+    uid: string,
+    data: Partial<User>
+  ): Promise<void> => {
+    try {
+      const users = await queryDocuments<any>("users", "uid", uid);
+      if (users.length > 0) {
+        const userDocId = users[0].id;
+        await editDocument<User>("users", userDocId, data);
+      } else {
+        throw new Error(`User with UID '${uid}' not found.`);
+      }
+    } catch (error) {
+      console.error(`Error updating user data for UID '${uid}':`, error);
+      throw error;
+    }
+  };
+
   const deleteDocument = async (
     collectionName: string,
     documentId: string
@@ -151,8 +199,10 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
         getDocument,
         queryDocuments,
         createDocument,
+        editDocument,
         deleteDocument,
         getUserData,
+        editUserData,
       }}
     >
       {children}

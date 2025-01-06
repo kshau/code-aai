@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 import SignupForm from "@/components/landing/signupForm";
 
 export default function Signup() {

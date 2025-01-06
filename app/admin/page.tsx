@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 import { Editor } from "@monaco-editor/react";
 import { SignupRequests } from "@/components/admin/signupRequest";
 import { ChallengeEditor } from "@/components/admin/challengeEditor";

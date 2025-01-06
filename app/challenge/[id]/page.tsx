@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { ChallengeTestCaseInput, loadCustomDarkEditorTheme } from "@/lib/utils";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 interface ChallengeFailedTestCase {
   inputs: ChallengeTestCaseInput[];

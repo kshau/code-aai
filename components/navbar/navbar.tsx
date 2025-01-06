@@ -1,0 +1,116 @@
+"use client";
+
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { LoadingPage } from "../loading";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import logo from "@/public/logo.png";
+import { useAuth } from "@/hooks/useAuth";
+import { NavbarLoginModal } from "./navbarLoginModal";
+import { NavbarUserMenu } from "./navbarUserMenu";
+
+const links = [
+  { href: "/", label: "About" },
+  { href: "/dashboard", label: "Dashboard" },
+];
+
+export default function Navbar({
+  children,
+  className,
+  protectedRoute = false,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  protectedRoute?: boolean;
+}) {
+  const { user, status, signIn, logOut } = useAuth();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const path = usePathname();
+  const router = useRouter();
+  const isActive = (href: string) => path === href;
+
+  useEffect(() => {
+    if (protectedRoute && status == "unauthenticated") {
+      router.push("/");
+    }
+  }, [status]);
+
+  if (status == "loading" && protectedRoute) {
+    return <LoadingPage />;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 w-full flex justify-between items-center px-6 sm:px-12 py-3 z-50 bg-background/80 backdrop-blur-lg border-b">
+        {/* Logo and Brand */}
+        <Link href="/" className="flex items-center justify-center">
+          <Image src={logo} alt="NSACC Logo" width={30} height={30} />
+          <h1 className="font-bold text-xl sm:text-2xl ml-2">CodeAAI</h1>
+        </Link>
+
+        {/* Desktop Links */}
+        <nav className="hidden sm:flex flex-row gap-6 items-center">
+          {links.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`relative transition-all ${
+                isActive(href)
+                  ? "text-blue-500"
+                  : "text-foreground/70 hover:text-blue-500"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+
+          {/* Auth Buttons */}
+          <div className={`flex items-center`}>
+            {status !== "unauthenticated" ? (
+              <NavbarUserMenu />
+            ) : (
+              <NavbarLoginModal
+                isLoginOpen={isLoginOpen}
+                setIsLoginOpen={setIsLoginOpen}
+                signIn={signIn}
+              />
+            )}
+          </div>
+        </nav>
+
+        {/* Mobile Menu */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="sm:hidden">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <nav className="flex flex-col gap-4">
+              {links.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-foreground/70 hover:text-foreground"
+                >
+                  {label}
+                </Link>
+              ))}
+              {user ? (
+                <Button onClick={logOut}>Logout</Button>
+              ) : (
+                <Button onClick={() => setIsLoginOpen(true)}>Login</Button>
+              )}
+            </nav>
+          </SheetContent>
+        </Sheet>
+      </header>
+      <main className={`z-0 flex-grow ${className}`}>{children}</main>
+    </div>
+  );
+}

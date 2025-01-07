@@ -8,13 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Editor, { loader } from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 import { PlayIcon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
-import { ChallengeTestCaseInput, loadCustomDarkEditorTheme } from "@/lib/utils";
+import {
+  Challenge,
+  ChallengeTestCaseInput,
+  loadCustomDarkEditorTheme,
+} from "@/lib/utils";
 import Navbar from "@/components/navbar/navbar";
+import { useFirestore } from "@/hooks/useFirestore";
+import React from "react";
+import { useParams } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ChallengeFailedTestCase {
   inputs: ChallengeTestCaseInput[];
@@ -22,44 +29,58 @@ interface ChallengeFailedTestCase {
   recievedOutput: string;
 }
 
-export default function Challenge({
-  params,
-}: {
-  params: { challengeId: string };
-}) {
-  const searchParams = useSearchParams();
+export default function ChallengePage() {
+  const params = useParams<{ challengeId: string }>();
+  const { queryDocuments } = useFirestore();
+  const { user } = useAuth();
 
+  const [challengeData, setChallengeData] = useState<Challenge | null>(null);
   const [editorContent, setEditorContent] = useState("");
-  const [codeOutput, setCodeOutput] = useState<string | null>(null);
   const [codeProducedError, setCodeProducedError] = useState<boolean>(false);
   const [codeFailedTestCase, setCodeFailedTestCase] =
     useState<ChallengeFailedTestCase | null>(null);
 
-  const [challengeSolved, setChallengeSolved] = useState<boolean>(false);
-
   const attemptChallengeSolve = async () => {
+    const userToken = await user?.getIdToken();
+
     const res = await axios.post(
       "/api/attemptChallengeSolve",
       {
         editorContent,
         challengeId: params.challengeId,
+        userToken,
       },
       { withCredentials: true }
     );
-
-    setCodeOutput(res.data.codeOutput);
     setCodeProducedError(res.data.producedError);
     setCodeFailedTestCase(res.data.failedTestCase);
   };
 
   const resetEditorContent = () => {
     setEditorContent("");
-    setCodeOutput(null);
     setCodeProducedError(false);
   };
 
   useEffect(() => {
     loadCustomDarkEditorTheme();
+  }, []);
+
+  useEffect(() => {
+    const getChallengeData = async () => {
+      const challengeDatas: Challenge[] = await queryDocuments<Challenge>(
+        "challenges",
+        "id",
+        params.challengeId
+      );
+
+      const challengeData = challengeDatas[0];
+      setChallengeData(challengeData);
+      setEditorContent(
+        `'''\n${challengeData.name}:\n${challengeData.description}\n'''\n`
+      );
+    };
+
+    getChallengeData();
   }, []);
 
   return (
@@ -91,7 +112,7 @@ export default function Challenge({
                 <CardContent className="space-y-4 text-sm p-0">
                   <div className="space-y-1">
                     <span>Input</span>
-                    <pre className="bg-neutral-800 rounded-sm p-2">
+                    <pre className="rounded-sm p-2">
                       {codeFailedTestCase.inputs.map(
                         (input, index) =>
                           `${input.name} = ${input.value} ${
@@ -104,13 +125,13 @@ export default function Challenge({
                   </div>
                   <div className="space-y-1">
                     <span>Recieved output</span>
-                    <pre className="bg-neutral-800 rounded-sm p-2">
+                    <pre className=" rounded-sm p-2">
                       {codeFailedTestCase.recievedOutput}
                     </pre>
                   </div>
                   <div className="space-y-1">
                     <span>Expected output</span>
-                    <pre className="bg-neutral-800 rounded-sm p-2">
+                    <pre className="rounded-sm p-2">
                       {codeFailedTestCase.expectedOutput}
                     </pre>
                   </div>
@@ -119,13 +140,6 @@ export default function Challenge({
             )}
 
             <Card className="relative h-full p-4">
-              <pre className={`${codeProducedError && "text-red-600"} h-full`}>
-                {codeOutput || (
-                  <span className="italic text-gray-400">
-                    Output will appear here
-                  </span>
-                )}
-              </pre>
               <div className="absolute bottom-2 left-0 right-0 flex flex-row justify-center gap-2">
                 <Button
                   className="w-fit self-center"

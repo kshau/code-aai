@@ -1,83 +1,81 @@
-import axios from "axios";
+import { CreateError, ErrorTypes } from "@/lib/errors";
+import { initAdmin } from "@/lib/firebase-admin/config";
+import { runCode } from "@/lib/runCode";
+import { Challenge } from "@/lib/utils";
+import exp from "constants";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
-const {RAPIDAPI_API_KEY} = process.env;
-
 interface attemptChallengeData {
-	editorContent: string;
-	challengeId: string;
-	userToken: string;
+  editorContent: string;
+  challengeId: string;
+  userToken: string;
 }
 
 export async function POST(request: NextRequest) {
-	const Auth = auth();
-	const Firestore = firestore();
-	const { editorContent, userToken, challengeId }: attemptChallengeData = await request.json();
+  await initAdmin();
+  const Auth = auth();
+  const Firestore = firestore();
 
-    const user = await Auth.verifyIdToken(userToken);
-    if(!user || !user.email){
-      return NextResponse.json(Errors.UNAUTHORIZED);
-    }
+  const { editorContent, challengeId, userToken }: attemptChallengeData =
+    await request.json();
 
-	try {
+  const user = await Auth.verifyIdToken(userToken);
+  if (!user || !user.email) {
+    return CreateError(ErrorTypes.UNAUTHORIZED);
+  }
 
-		const res = await axios.post(
-			"https://onecompiler-apis.p.rapidapi.com/api/v1/run",
-			{
-				language: "python",
-				files: [
-					{
-						name: "index.py",
-						content: editorContent,
-					},
-				],
-			},
-			{
-				headers: {
-					"x-rapidapi-key": RAPIDAPI_API_KEY,
-					"x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
-					"Content-Type": "application/json",
-				},
-			}
-		);
+  const challenges = await Firestore.collection("challenges")
+    .where("id", "==", challengeId)
+    .get();
 
-		const { stdout, stderr } = res.data;
+  if (!challenges.docs[0]) {
+    return CreateError(ErrorTypes.CHALLENGE_NOT_FOUND);
+  }
 
+  const challenge: Challenge = challenges.docs[0].data() as Challenge;
+  let pass = 0;
+  let failedTestCase: any = null;
 
-		return NextResponse.json(
-			{
-				codeOutput: stdout || stderr,
-				producedError: stderr != null,
-				failedTestCase: {
-					inputs: [
-						{
-							name: "number", 
-							type: "int", 
-							value: 17
-						}, 
-						{
-							name: "length", 
-							type: "int", 
-							value: 2
-						}, 
-					], 
-					expectedOutput: "20", 
-					recievedOutput: "25"
-				}
-			},
-			{ status: 200 }
-		);
-	} catch (err:any) {
-		console.error(err);
+  try {
+    await Promise.all(
+      challenge.testCases.map(async (testCase, index) => {
+        let args: any[] = [];
+        let inputs: any[] = [];
 
+        testCase.inputs.forEach((input) => {
+          args.push(input.value);
+          inputs.push({ name: input.name, value: input.value });
+        });
 
-		return NextResponse.json(
-			{
-				error:err.message
-			},
-			{ status: 500 }
-		);
+        const result = await runCode(editorContent, args);
 
-	}
+        if (result.stdout === testCase.expectedOutput) {
+          pass += 1;
+        } else if (!failedTestCase) {
+          failedTestCase = {
+            inputs: inputs,
+            expectedOutput: testCase.expectedOutput,
+            recievedOutput: result.stdout, // Fix typo from 'stddout' to 'stdout'
+          };
+        }
+      })
+    );
+
+    return NextResponse.json(
+      {
+        failedTestCase: failedTestCase,
+        passedCases: pass,
+        totalCases: challenge.testCases.length,
+      },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      {
+        error: err.message,
+      },
+      { status: 500 }
+    );
+  }
 }

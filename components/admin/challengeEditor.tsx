@@ -11,17 +11,23 @@ import { Challenge } from "@/lib/utils";
 const defaultJson = `{
   "name": "Example Challenge",
   "description": "This is an example challenge description.",
-  "arguments": {"arg1":"Int", "arg2":"Int"},
-  "difficulty": "Medium",
+  "difficulty": "medium",
+  "solved": false,
   "points": 100,
   "testCases": [
     {
-      "args": {"arg1":10, "arg2":20},
-      "output": "30"
+      "inputs": [
+        { "name": "arg1", "type": "int", "value": 10 },
+        { "name": "arg2", "type": "int", "value": 20 }
+      ],
+      "expectedOutput": "30"
     },
     {
-      "args": {"arg1":40, "arg2":50},
-      "output": "90"
+      "inputs": [
+        { "name": "arg1", "type": "int", "value": 40 },
+        { "name": "arg2", "type": "int", "value": 50 }
+      ],
+      "expectedOutput": "90"
     }
   ]
 }`;
@@ -79,7 +85,7 @@ export function ChallengeEditor() {
         height="23rem"
         defaultLanguage="json"
         value={editorValue}
-        onChange={handleEditorChange} // Capture changes in the editor
+        onChange={handleEditorChange}
       />
       <Button onClick={handleCreate}>Create</Button>
       <Button

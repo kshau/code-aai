@@ -3,20 +3,19 @@ import { User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
-const {ADMIN_EMAILS} = process.env;
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [];
 
 export async function POST(request: NextRequest) {
   await initAdmin();
   const Auth = auth();
   const Firestore = firestore();
-  const adminEmails = ADMIN_EMAILS ? ADMIN_EMAILS.split(',') : [];
 
   try {
     const body = await request.json();
     const { userToken, username, parentEmail, codingExperience, gradeLevel} = body;
     
     // const adminUser = await Auth.verifyIdToken(userToken);
-    // if(!adminUser || !adminUser.email || !adminEmails.includes(adminUser.email)){
+    // if(!adminUser || !adminUser.email || !ADMIN_EMAILS.includes(adminUser.email)){
     //   return NextResponse.json(Errors.UNAUTHORIZED);
     // }
 
@@ -46,7 +45,6 @@ export async function POST(request: NextRequest) {
       codingExperience:codingExperience,
       gradeLevel:gradeLevel
     };
-
     await Firestore.collection("users").doc(userRecord.uid).set(userDoc);
 
     return NextResponse.json({

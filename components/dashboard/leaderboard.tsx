@@ -27,7 +27,7 @@ export default function Leaderboard() {
   }, []);
 
   return (
-    <Card className="w-[400px] h-full flex-grow flex-col">
+    <Card className="w-[400px] h-full flex-grow flex-col animate-flyInFromRight">
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
       </CardHeader>

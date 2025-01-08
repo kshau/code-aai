@@ -157,11 +157,11 @@ export default function SignupForm() {
             </RadioGroup>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full mb-2">
             Sign Up
           </Button>
         </form>
-        <span className="h-4 mt-4 w-full flex justify-center items-center  text-sm font-semibold">
+        <span className="h-4 mt-4 w-full flex justify-center items-center  text-sm font-semibold mb-2">
           {alertMessage}
         </span>
       </CardContent>

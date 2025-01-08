@@ -26,7 +26,7 @@ export default function ProfileStatistics() {
   }, [status, user?.uid]);
 
   return (
-    <div className="flex w-full h-60 gap-2">
+    <div className="flex w-full h-60 gap-2 animate-flyInFromTopLeft">
       <Card className="flex-grow flex items-center justify-center ">
         {userData ? userData.points : <Loading />}
       </Card>

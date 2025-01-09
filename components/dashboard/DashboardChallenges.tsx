@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Challenge } from "@/lib/utils";
+import { Challenge, ChallengeDifficulty } from "@/lib/utils";
 import Link from "next/link";
 import { ArrowRightIcon, SearchIcon, SearchXIcon } from "lucide-react";
 import { Input } from "../ui/input";
@@ -22,10 +22,10 @@ import { Loading } from "../loading";
 
 interface ChallengeSearchQuery {
   keyword: string;
-  difficulty: "easy" | "medium" | "hard" | null;
+  difficulty: ChallengeDifficulty | null;
 }
 
-export default function ChallengeSection() {
+export default function DashboardChallenges() {
   const [challengesData, setChallengesData] = useState<Challenge[] | null>(
     null
   );
@@ -73,7 +73,7 @@ export default function ChallengeSection() {
             challengeDescriptionFormatted.includes(
               searchQueryKeywordFormatted
             )) &&
-          (challenge.difficulty === searchQuery.difficulty ||
+          (challenge.difficulty == searchQuery.difficulty ||
             !searchQuery.difficulty)
         );
       }
@@ -83,7 +83,7 @@ export default function ChallengeSection() {
   }, [challengesData, searchQuery]);
 
   return (
-    <div className="animate-flyInFromBottomLeft lg:min-w-[50rem] flex justify-center">
+    <div className="lg:animate-flyInFromBottomLeft lg:min-w-[50rem] flex justify-center">
       {challengesData ? (
         <div>
           <div className="flex flex-row gap-x-2">
@@ -105,9 +105,9 @@ export default function ChallengeSection() {
                 setSearchQuery({
                   ...searchQuery,
                   difficulty:
-                    value === "any"
+                    value == "any"
                       ? null
-                      : (value as "easy" | "medium" | "hard"),
+                      : (value as ChallengeDifficulty),
                 });
               }}
             >

@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export type UserCodingExperience = "beginner" | "intermediate" | "advanced"
+
 export interface User {
   uid: string;
   avatar: string;
@@ -14,21 +16,23 @@ export interface User {
   parentEmail: string;
   solvedChallengeIds: string[];
   points: number;
-  codingExperience: "beginner" | "intermediate" | "advanced";
+  codingExperience: UserCodingExperience;
 }
 
 export interface UserSignupRequestData {
   username: string;
   gradeLevel: number;
   parentEmail: string;
-  codingExperience: "beginner" | "intermediate" | "advanced";
+  codingExperience: UserCodingExperience;
 }
+
+export type ChallengeDifficulty = "easy" | "medium" | "hard";
 
 export interface Challenge {
   id: string;
   name: string;
   description: string;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: ChallengeDifficulty;
   testCases: ChallengeTestCase[];
   solved: boolean;
   points: number;
@@ -43,18 +47,6 @@ export interface ChallengeTestCaseInput {
   name: string;
   type: "string" | "int" | "float" | "boolean";
   value: any;
-}
-
-export interface ChallengeSubmissionResult {
-  failedTestCase: ChallengeFailedTestCase | null;
-  passedCases: number;
-  totalCases: number;
-}
-
-interface ChallengeFailedTestCase {
-  inputs: ChallengeTestCaseInput[];
-  expectedOutput: string;
-  recievedOutput: string;
 }
 
 export function formatChallengeTestCaseInputName(inputName: string) {

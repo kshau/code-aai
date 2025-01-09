@@ -1,15 +1,15 @@
 "use client";
 
-import Navbar from "@/components/navbar/navbar";
-import SignupForm from "@/components/landing/signupForm";
+import Navbar from "@/components/navbar/Navbar";
+import LandingSignupForm from "@/components/landing/LandingSignupForm";
 
-export default function Signup() {
+export default function Landing() {
   return (
     <Navbar>
       <div className="flex flex-wrap gap-16 justify-center mt-32 p-4">
         <div className="flex flex-col my-auto">
           <img
-            src="/undraw-proud-coder.svg"
+            src="/graphics/undraw-proud-coder.svg"
             alt="Proud Coder"
             className="w-96"
           />
@@ -23,7 +23,7 @@ export default function Signup() {
           </span>
         </div>
 
-        <SignupForm />
+        <LandingSignupForm />
       </div>
     </Navbar>
   );

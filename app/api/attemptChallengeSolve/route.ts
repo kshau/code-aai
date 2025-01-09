@@ -1,8 +1,7 @@
 import { CreateError, ErrorTypes } from "@/lib/errors";
 import { initAdmin } from "@/lib/firebase-admin/config";
 import { runCode } from "@/lib/runCode";
-import { Challenge } from "@/lib/utils";
-import exp from "constants";
+import { Challenge, User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,6 +24,16 @@ export async function POST(request: NextRequest) {
     return CreateError(ErrorTypes.UNAUTHORIZED);
   }
 
+  const userDatas = await Firestore.collection("users")
+    .where("uid", "==", user.uid)
+    .get();
+
+  if (!userDatas.docs[0]) {
+    return CreateError(ErrorTypes.UNAUTHORIZED);
+  }
+  const userData: User = userDatas.docs[0].data() as User;
+  const userDoc = userDatas.docs[0];
+
   const challenges = await Firestore.collection("challenges")
     .where("id", "==", challengeId)
     .get();
@@ -33,13 +42,17 @@ export async function POST(request: NextRequest) {
     return CreateError(ErrorTypes.CHALLENGE_NOT_FOUND);
   }
 
-  const challenge: Challenge = challenges.docs[0].data() as Challenge;
+  const challengeData: Challenge = challenges.docs[0].data() as Challenge;
   let pass = 0;
   let failedTestCase: any = null;
 
+  if (userData.solvedChallengeIds.includes(challengeData.id)) {
+    return CreateError(ErrorTypes.SOLVED_ALREADY);
+  }
+
   try {
     await Promise.all(
-      challenge.testCases.map(async (testCase, index) => {
+      challengeData.testCases.map(async (testCase, index) => {
         let args: any[] = [];
         let inputs: any[] = [];
 
@@ -49,28 +62,35 @@ export async function POST(request: NextRequest) {
         });
 
         const result = await runCode(editorContent, args);
-
-        if (result.stdout === testCase.expectedOutput) {
+        if (result.stdout === testCase.expectedOutput.toString().trim()) {
           pass += 1;
         } else if (!failedTestCase) {
           failedTestCase = {
             inputs: inputs,
             expectedOutput: testCase.expectedOutput,
-            recievedOutput: result.stdout, // Fix typo from 'stddout' to 'stdout'
+            recievedOutput: result.stdout,
           };
         }
       })
     );
 
+    if (pass === challengeData.testCases.length) {
+      await userDoc.ref.update({
+        points: userData.points + challengeData.points,
+        solvedChallengeIds: [...userData.solvedChallengeIds, challengeData.id],
+      });
+    }
+
     return NextResponse.json(
       {
         failedTestCase: failedTestCase,
         passedCases: pass,
-        totalCases: challenge.testCases.length,
+        totalCases: challengeData.testCases.length,
       },
       { status: 200 }
     );
   } catch (err: any) {
+    console.error(err);
     return NextResponse.json(
       {
         error: err.message,

@@ -4,6 +4,7 @@ export enum ErrorTypes {
   INVALID_ARGUMENTS,
   UNAUTHORIZED,
   CHALLENGE_NOT_FOUND,
+  SOLVED_ALREADY,
 }
 
 export function CreateError(error: ErrorTypes) {
@@ -23,6 +24,11 @@ export function CreateError(error: ErrorTypes) {
       return NextResponse.json(
         { message: "You are not allowed to preform this action" },
         { status: 401 }
+      );
+    case ErrorTypes.SOLVED_ALREADY:
+      return NextResponse.json(
+        { solvedAlready: true, message: "You already solved this challenge!" },
+        { status: 200 }
       );
   }
 }

@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -30,6 +36,7 @@ export default function Leaderboard() {
     <Card className="w-[400px] h-full flex-grow flex-col animate-flyInFromRight">
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
+        <CardDescription>See the users with the most points!</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

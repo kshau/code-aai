@@ -9,12 +9,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Editor from "@monaco-editor/react";
-import { PlayIcon, RefreshCwIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  PlayIcon,
+  RefreshCcwDotIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Challenge,
-  ChallengeTestCaseInput,
+  ChallengeSubmissionResult,
   loadCustomDarkEditorTheme,
 } from "@/lib/utils";
 import Navbar from "@/components/navbar/navbar";
@@ -23,12 +28,6 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ChallengeFailedTestCase {
-  inputs: ChallengeTestCaseInput[];
-  expectedOutput: string;
-  recievedOutput: string;
-}
-
 export default function ChallengePage() {
   const params = useParams<{ challengeId: string }>();
   const { queryDocuments } = useFirestore();
@@ -36,29 +35,44 @@ export default function ChallengePage() {
 
   const [challengeData, setChallengeData] = useState<Challenge | null>(null);
   const [editorContent, setEditorContent] = useState("");
-  const [codeProducedError, setCodeProducedError] = useState<boolean>(false);
-  const [codeFailedTestCase, setCodeFailedTestCase] =
-    useState<ChallengeFailedTestCase | null>(null);
+  const [codeSubmissionResult, setCodeSubmissionResult] =
+    useState<ChallengeSubmissionResult | null>(null);
+
+  const [isSolvedAlready, setIsSolvedAlready] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const attemptChallengeSolve = async () => {
-    const userToken = await user?.getIdToken();
+    try {
+      const userToken = await user?.getIdToken();
 
-    const res = await axios.post(
-      "/api/attemptChallengeSolve",
-      {
-        editorContent,
-        challengeId: params.challengeId,
-        userToken,
-      },
-      { withCredentials: true }
-    );
-    setCodeProducedError(res.data.producedError);
-    setCodeFailedTestCase(res.data.failedTestCase);
+      const res = await axios.post(
+        "/api/attemptChallengeSolve",
+        {
+          editorContent,
+          challengeId: params.challengeId,
+          userToken,
+        },
+        { withCredentials: true }
+      );
+
+      if (res.data.solvedAlready) {
+        setIsSolvedAlready(true);
+        setCodeSubmissionResult(null); // Clear any previous submission results
+      } else {
+        setIsSolvedAlready(false);
+        setCodeSubmissionResult(res.data);
+        setErrorMessage(""); // Clear any error messages
+      }
+    } catch (error: any) {
+      console.error("Error while attempting to solve the challenge:", error);
+      setErrorMessage(
+        "An error occurred while submitting your code. Please try again."
+      );
+    }
   };
 
   const resetEditorContent = () => {
     setEditorContent("");
-    setCodeProducedError(false);
   };
 
   useEffect(() => {
@@ -84,82 +98,121 @@ export default function ChallengePage() {
   }, []);
 
   return (
-    <Navbar>
-      <div className="w-screen flex justify-center mt-12">
-        <div className="flex gap-y-4">
-          <Card className="p-6 flex flex-wrap">
-            <Editor
-              height="70vh"
-              width="30vw"
-              defaultLanguage="python"
-              theme="custom-light"
-              value={editorContent}
-              onChange={(value) => {
-                setEditorContent(value || "");
-              }}
-            />
-          </Card>
-          <div className="flex flex-col pl-6 w-[15vw] gap-y-6">
-            {codeFailedTestCase && (
-              <Card className="h-full border-none mt-4">
-                <CardHeader className="p-0 mb-4">
-                  <CardTitle>Failed Test Case</CardTitle>
-                  <CardDescription>
-                    Your code caused one or more test cases to fail! Details are
-                    below for one of them.
+    <Navbar className="flex items-center justify-center mb-16">
+      <div className="flex gap-y-4">
+        <Card className="p-6 flex flex-wrap">
+          <Editor
+            height="70vh"
+            width="50vw"
+            defaultLanguage="python"
+            theme="custom-light"
+            value={editorContent}
+            onChange={(value) => {
+              setEditorContent(value || "");
+            }}
+          />
+        </Card>
+        <div className="flex flex-col pl-2 w-[20vw] gap-y-6">
+          <Card className="relative h-full p-4">
+            <CardTitle className="mb-2">{challengeData?.name}</CardTitle>
+
+            {isSolvedAlready ? (
+              <div className="flex flex-col h-full justify-center items-center pb-32">
+                <div className="bg-gray-500 rounded-full p-4">
+                  <RefreshCcwDotIcon className="text-white aspect-square" />
+                </div>
+                <span className="text-center mt-4">
+                  You already solved this challenge. Good work!
+                </span>
+              </div>
+            ) : errorMessage ? (
+              <CardDescription className="text-red-500">
+                {errorMessage}
+              </CardDescription>
+            ) : codeSubmissionResult !== null ? (
+              codeSubmissionResult.failedTestCase !== null ? (
+                <>
+                  <CardDescription className="mb-4">
+                    Try again! Your code caused{" "}
+                    {codeSubmissionResult.totalCases -
+                      codeSubmissionResult.passedCases}
+                    /{codeSubmissionResult.totalCases} test cases to fail!
+                    Details are below for one of them.
                   </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm p-0">
-                  <div className="space-y-1">
-                    <span>Input</span>
-                    <pre className="rounded-sm p-2">
-                      {codeFailedTestCase.inputs.map(
-                        (input, index) =>
-                          `${input.name} = ${input.value} ${
-                            index > codeFailedTestCase.inputs.length + 1
-                              ? ","
-                              : ""
-                          }`
-                      )}
-                    </pre>
+                  <CardContent className="space-y-4 text-sm p-0">
+                    <div className="space-y-1">
+                      <span>Input</span>
+                      <pre className="rounded-sm p-2">
+                        {codeSubmissionResult?.failedTestCase.inputs
+                          .map(
+                            (input, index) =>
+                              `${input.name} = ${input.value}${
+                                index <
+                                codeSubmissionResult.failedTestCase!.inputs
+                                  .length -
+                                  1
+                                  ? ", "
+                                  : ";"
+                              }`
+                          )
+                          .join("")}
+                      </pre>
+                    </div>
+                    <div className="space-y-1">
+                      <span>Received output</span>
+                      <pre className="rounded-sm p-2">
+                        {codeSubmissionResult?.failedTestCase.recievedOutput ||
+                          "None"}
+                      </pre>
+                    </div>
+                    <div className="space-y-1">
+                      <span>Expected output</span>
+                      <pre className="rounded-sm p-2">
+                        {codeSubmissionResult?.failedTestCase.expectedOutput}
+                      </pre>
+                    </div>
+                  </CardContent>
+                </>
+              ) : (
+                <div className="flex flex-col h-full justify-center items-center pb-32">
+                  <div className="bg-green-500 rounded-full p-4">
+                    <CheckCircleIcon className="text-white aspect-square" />
                   </div>
-                  <div className="space-y-1">
-                    <span>Recieved output</span>
-                    <pre className=" rounded-sm p-2">
-                      {codeFailedTestCase.recievedOutput}
-                    </pre>
-                  </div>
-                  <div className="space-y-1">
-                    <span>Expected output</span>
-                    <pre className="rounded-sm p-2">
-                      {codeFailedTestCase.expectedOutput}
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
+                  <span className="text-center mt-4">
+                    Your code passed all test cases! Great job, +
+                    <span className="text-green-600 underline">
+                      {challengeData?.points}
+                    </span>{" "}
+                    points
+                  </span>
+                </div>
+              )
+            ) : (
+              <CardDescription>
+                Test your code against the test cases by pressing run. This is a{" "}
+                {challengeData?.difficulty} challenge!
+              </CardDescription>
             )}
 
-            <Card className="relative h-full p-4">
-              <div className="absolute bottom-2 left-0 right-0 flex flex-row justify-center gap-2">
-                <Button
-                  className="w-fit self-center"
-                  onClick={attemptChallengeSolve}
-                >
-                  <PlayIcon />
-                  Run
-                </Button>
+            <div className="absolute bottom-2 left-0 right-0 flex flex-row justify-center gap-2">
+              <Button
+                className="w-fit self-center"
+                onClick={attemptChallengeSolve}
+              >
+                <PlayIcon />
+                Run
+              </Button>
 
-                <Button
-                  className="w-fit self-center"
-                  variant="secondary"
-                  onClick={resetEditorContent}
-                >
-                  <RefreshCwIcon />
-                  Reset
-                </Button>
-              </div>
-            </Card>
-          </div>
+              <Button
+                className="w-fit self-center"
+                variant="secondary"
+                onClick={resetEditorContent}
+              >
+                <RefreshCwIcon />
+                Reset
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     </Navbar>

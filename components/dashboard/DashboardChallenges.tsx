@@ -5,9 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Challenge, ChallengeDifficulty } from "@/lib/utils";
+import { Challenge, ChallengeDifficulty, User } from "@/lib/utils";
 import Link from "next/link";
-import { ArrowRightIcon, SearchIcon, SearchXIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  Check,
+  CheckCheck,
+  SearchIcon,
+  SearchXIcon,
+} from "lucide-react";
 import { Input } from "../ui/input";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,8 +42,10 @@ export default function DashboardChallenges() {
   const [searchedChallengesData, setSearchedChallengesData] = useState<
     Challenge[]
   >([]);
-  const { getDocuments } = useFirestore();
+
+  const { getDocuments, getUserData } = useFirestore();
   const { user } = useAuth();
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -55,6 +63,17 @@ export default function DashboardChallenges() {
 
     fetchChallenges();
   }, [user, getDocuments]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const userData: User = await getUserData(user.uid);
+        setUserData(userData);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     if (!challengesData) {
@@ -83,8 +102,8 @@ export default function DashboardChallenges() {
   }, [challengesData, searchQuery]);
 
   return (
-    <div className="lg:animate-flyInFromBottomLeft lg:min-w-[50rem] flex justify-center">
-      {challengesData ? (
+    <div className="lg:animate-flyInFromBottomLeft lg:min-w-[50rem]">
+      {challengesData && userData ? (
         <div>
           <div className="flex flex-row gap-x-2">
             <div className="flex flex-row border-[1px] rounded-md mb-2 w-full">
@@ -105,9 +124,7 @@ export default function DashboardChallenges() {
                 setSearchQuery({
                   ...searchQuery,
                   difficulty:
-                    value == "any"
-                      ? null
-                      : (value as ChallengeDifficulty),
+                    value == "any" ? null : (value as ChallengeDifficulty),
                 });
               }}
             >
@@ -126,30 +143,44 @@ export default function DashboardChallenges() {
           <ScrollArea className="flex-grow pr-4">
             {searchedChallengesData.length > 0 ? (
               <div className="grid lg:grid-cols-2 gap-2 h-full max-w-[50rem] max-h-[40vh]">
-                {searchedChallengesData.map((challenge: Challenge, index) => (
-                  <Card className="max-w-3xl" key={index}>
-                    <CardHeader className="flex flex-row gap-4">
-                      <CardTitle>{challenge.name}</CardTitle>
-                      <Badge
-                        className="my-auto relative bottom-1"
-                        difficulty={challenge.difficulty}
-                      >
-                        {challenge.difficulty.toUpperCase()}
-                      </Badge>
-                    </CardHeader>
-                    <CardContent className="text-lg flex flex-row gap-x-4">
-                      <span className="font-thin">{challenge.description}</span>
-                      <Link href={`/challenge/${challenge.id}`}>
-                        <Button
-                          variant="outline"
-                          className="my-auto rounded-full aspect-square h-12"
+                {searchedChallengesData.map((challenge: Challenge, index) => {
+                  const isSolved = userData.solvedChallenges.some(
+                    (solvedChallenge) => solvedChallenge.id === challenge.id
+                  );
+
+                  return (
+                    <Card className="max-w-3xl" key={index}>
+                      <CardHeader className="flex flex-row gap-4">
+                        <CardTitle>{challenge.name}</CardTitle>
+                        <Badge
+                          className="my-auto relative bottom-1"
+                          difficulty={challenge.difficulty}
                         >
-                          <ArrowRightIcon strokeWidth={3} />
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                ))}
+                          {challenge.difficulty.toUpperCase()}
+                        </Badge>
+                      </CardHeader>
+                      <CardContent className="text-lg flex flex-row gap-x-4">
+                        <span className="font-light">
+                          {challenge.description}
+                        </span>
+                        <Link href={`/challenge/${challenge.id}`}>
+                          <Button
+                            variant="outline"
+                            className={`my-auto rounded-full aspect-square h-12 ${
+                              isSolved ? "bg-green-600 hover:bg-green-700" : ""
+                            } `}
+                          >
+                            {isSolved == false ? (
+                              <ArrowRightIcon strokeWidth={3} />
+                            ) : (
+                              <Check className="text-white" />
+                            )}
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <div className="flex flex-col items-center text-gray-400 gap-y-4 pt-12">

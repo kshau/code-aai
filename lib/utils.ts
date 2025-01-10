@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export type UserCodingExperience = "beginner" | "intermediate" | "advanced"
+export type UserCodingExperience = "beginner" | "intermediate" | "advanced";
 
 export interface User {
   uid: string;
@@ -14,9 +14,15 @@ export interface User {
   username: string;
   gradeLevel: number;
   parentEmail: string;
-  solvedChallengeIds: string[];
+  solvedChallenges: SolvedChallenge[];
   points: number;
   codingExperience: UserCodingExperience;
+}
+
+export interface SolvedChallenge {
+  id: string;
+  timestamp: string;
+  points: number;
 }
 
 export interface UserSignupRequestData {
@@ -81,4 +87,15 @@ export function toOrdinal(num: number) {
   const s = ["th", "st", "nd", "rd"];
   const v = num % 100;
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+export function isSameDay(timestamp1: number, timestamp2: string) {
+  const date1 = new Date(timestamp1);
+  const date2 = new Date(timestamp2);
+
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }

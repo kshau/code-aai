@@ -24,15 +24,15 @@ export async function POST(request: NextRequest) {
     return CreateError(ErrorTypes.UNAUTHORIZED);
   }
 
-  const userDatas = await Firestore.collection("users")
+  const usersData = await Firestore.collection("users")
     .where("uid", "==", user.uid)
     .get();
 
-  if (!userDatas.docs[0]) {
+  if (!usersData.docs[0]) {
     return CreateError(ErrorTypes.UNAUTHORIZED);
   }
-  const userData: User = userDatas.docs[0].data() as User;
-  const userDoc = userDatas.docs[0];
+  const userData: User = usersData.docs[0].data() as User;
+  const userDoc = usersData.docs[0];
 
   const challenges = await Firestore.collection("challenges")
     .where("id", "==", challengeId)
@@ -46,7 +46,11 @@ export async function POST(request: NextRequest) {
   let pass = 0;
   let failedTestCase: any = null;
 
-  if (userData.solvedChallengeIds.includes(challengeData.id)) {
+  if (
+    userData.solvedChallenges.some(
+      (challenge) => challenge.id === challengeData.id
+    )
+  ) {
     return CreateError(ErrorTypes.SOLVED_ALREADY);
   }
 
@@ -62,7 +66,9 @@ export async function POST(request: NextRequest) {
         });
 
         const result = await runCode(editorContent, args);
-        if (result.stdout === testCase.expectedOutput.toString().trim()) {
+        const output: string = result.stdout || "";
+
+        if (output.trim() === testCase.expectedOutput.trim()) {
           pass += 1;
         } else if (!failedTestCase) {
           failedTestCase = {
@@ -77,7 +83,14 @@ export async function POST(request: NextRequest) {
     if (pass === challengeData.testCases.length) {
       await userDoc.ref.update({
         points: userData.points + challengeData.points,
-        solvedChallengeIds: [...userData.solvedChallengeIds, challengeData.id],
+        solvedChallenges: [
+          ...userData.solvedChallenges,
+          {
+            id: challengeData.id,
+            timestamp: new Date().toDateString(),
+            points: challengeData.points,
+          },
+        ],
       });
     }
 

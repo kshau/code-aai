@@ -4,18 +4,8 @@ import Image from "next/image";
 import Navbar from "@/components/navbar/Navbar";
 import LandingSignupForm from "@/components/landing/LandingSignupForm";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 
 export default function Landing() {
-
-  const { status } = useAuth();
-
-  useEffect(() => { 
-    if (status == "authenticated") {
-      location.href = "/dashboard";
-    }
-  }, [status]);
 
   return (
     <Navbar>

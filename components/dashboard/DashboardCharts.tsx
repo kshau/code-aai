@@ -46,6 +46,7 @@ export default function DashboardCharts() {
     const today = new Date();
 
     for (let i = 7; i >= 0; i--) {
+
       const pastDate = new Date(today);
       pastDate.setDate(today.getDate() - i);
 
@@ -64,6 +65,7 @@ export default function DashboardCharts() {
         ),
       });
     }
+    console.log(newPointsOverTimeChartData)
     setPointsOverTimeChartData(newPointsOverTimeChartData);
   };
 
@@ -113,7 +115,6 @@ export default function DashboardCharts() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <ChartTooltip
                   cursor={false}

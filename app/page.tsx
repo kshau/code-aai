@@ -4,8 +4,19 @@ import Image from "next/image";
 import Navbar from "@/components/navbar/Navbar";
 import LandingSignupForm from "@/components/landing/LandingSignupForm";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 export default function Landing() {
+
+  const { status } = useAuth();
+
+  useEffect(() => { 
+    if (status == "authenticated") {
+      location.href = "/dashboard";
+    }
+  }, [status]);
+
   return (
     <Navbar>
       <div className="flex flex-wrap lg:gap-32 justify-center mt-32 p-4">
@@ -19,7 +30,7 @@ export default function Landing() {
             className="w-72 mx-auto my-4"
           />
           <p className="text-md mb-8 mt-2">
-            Jumpstart your coding journey with Codeaai, where beginners in
+            Jumpstart your coding journey with CodeAAI, where beginners in
             Forsyth County can tackle fun challenges and compete for a{" "}
             <span className="font-bold text-primary">$500</span> cash prize!
             Brought to you by the Coding Club at Alliance Academy for Innovation

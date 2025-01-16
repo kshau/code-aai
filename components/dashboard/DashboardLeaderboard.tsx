@@ -81,7 +81,7 @@ export default function DashboardLeaderboard() {
   }, [filter, user, leaderboardData]);
 
   return (
-    <Card className="max-w-[40rem] h-full flex-grow flex-col lg:animate-flyInFromRight">
+    <Card className="lg:max-w-[40rem] h-full flex-grow flex-col lg:animate-flyInFromRight">
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>

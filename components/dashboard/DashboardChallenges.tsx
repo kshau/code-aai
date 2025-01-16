@@ -150,17 +150,14 @@ export default function DashboardChallenges() {
 
                   return (
                     <Card className="max-w-3xl" key={index}>
-                      <CardHeader className="flex flex-row gap-4">
+                      <CardHeader className="flex flex-row items-center gap-4">
                         <CardTitle>{challenge.name}</CardTitle>
-                        <Badge
-                          className="my-auto relative bottom-1"
-                          difficulty={challenge.difficulty}
-                        >
+                        <Badge difficulty={challenge.difficulty}>
                           {challenge.difficulty.toUpperCase()}
                         </Badge>
                       </CardHeader>
                       <CardContent className="text-lg flex flex-row gap-x-4">
-                        <span className="font-light">
+                        <span className="font-light text-sm">
                           {challenge.description}
                         </span>
                         <Link href={`/challenge/${challenge.id}`}>

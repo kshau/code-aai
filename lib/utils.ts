@@ -99,3 +99,7 @@ export function isSameDay(timestamp1: number, timestamp2: string) {
     date1.getDate() === date2.getDate()
   );
 }
+
+export interface UserSignupRequestDataDocument extends UserSignupRequestData {
+  id: string;
+}

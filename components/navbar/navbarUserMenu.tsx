@@ -24,6 +24,8 @@ import {
 } from "../ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import Link from "next/link";
 
 export function NavbarUserMenu() {
   const { user, logOut, status } = useAuth();
@@ -97,12 +99,22 @@ export function NavbarUserMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Settings</DialogTitle>
+            <DialogDescription>
+              You can edit basic settings here! For more sensitive changes,
+              please contact{" "}
+              <Link
+                href="mailto:contact.codeaai@gmail.com"
+                className="underline text-primary"
+              >
+                contact.codeaai@gmail.com
+              </Link>
+            </DialogDescription>
           </DialogHeader>
           <DialogHeader>Avatar</DialogHeader>
-          <div className="flex items-center  w-full gap-2">
+          <div className="flex items-center  w-full gap-2 mb-4">
             {["boy1", "boy2", "girl1", "girl2"].map((avatar, index) => (
               <Button
                 key={index}
@@ -121,24 +133,28 @@ export function NavbarUserMenu() {
             ))}
           </div>
           <DialogFooter>
-            <DialogClose>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <DialogClose>
-              <Button
-                onClick={async () => {
-                  if (userData) {
-                    await editUserData(userData.uid, {
-                      avatar: selectedAvatar || "boy1",
-                    });
-                    await fetchUser();
-                  }
-                }}
-                className="w-fit"
-              >
-                Save
-              </Button>
-            </DialogClose>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSettingsOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                if (userData) {
+                  await editUserData(userData.uid, {
+                    avatar: selectedAvatar || "boy1",
+                  });
+                  await fetchUser();
+                }
+                setSettingsOpen(false);
+              }}
+              className="w-fit"
+            >
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

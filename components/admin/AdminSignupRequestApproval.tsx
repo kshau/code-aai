@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserSignupRequestData } from "@/lib/utils";
+import {
+  UserSignupRequestData,
+  UserSignupRequestDataDocument,
+} from "@/lib/utils";
 import { useFirestore } from "@/hooks/useFirestore";
 import {
   Table,
@@ -23,11 +26,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface UserSignupRequestDataDocument extends UserSignupRequestData {
-  id: string;
-}
-
-export function AdminSignupRequestApproval() {
+export function AdminSignupRequestApproval({
+  signupRequests,
+}: {
+  signupRequests: UserSignupRequestDataDocument[];
+}) {
   const [userSignupRequestsData, setUserSignupRequestsData] = useState<
     UserSignupRequestDataDocument[]
   >([]);
@@ -35,33 +38,16 @@ export function AdminSignupRequestApproval() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
     null
   );
-  const { getDocuments, deleteDocument } = useFirestore();
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const fetchSignupRequests = async () => {
-    try {
-      const data = await getDocuments<UserSignupRequestDataDocument>(
-        "signup-requests"
-      );
-      const documentsWithIds = data.map((doc) => ({
-        ...doc,
-        id: doc.id || "N/A",
-      }));
-      setUserSignupRequestsData(documentsWithIds);
-    } catch (error) {
-      console.error("Error fetching user signup requests: ", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch signup requests.",
-        variant: "destructive",
-      });
-    }
-  };
-
   useEffect(() => {
-    fetchSignupRequests();
-  }, [getDocuments]);
+    if (signupRequests) {
+      setUserSignupRequestsData(signupRequests);
+    } else {
+      setUserSignupRequestsData([]);
+    }
+  }, [signupRequests]);
 
   const deleteRequest = async (
     userSignupRequestData: UserSignupRequestDataDocument,
@@ -69,8 +55,8 @@ export function AdminSignupRequestApproval() {
   ) => {
     const userToken = await user?.getIdToken();
     try {
-      const response = await fetch("/api/admin/deleteUser", {
-        method: "POST",
+      const response = await fetch("/api/admin/signupRequest", {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
@@ -82,7 +68,6 @@ export function AdminSignupRequestApproval() {
       });
 
       if (response.ok) {
-        await deleteDocument("signup-requests", userSignupRequestData.id);
         setUserSignupRequestsData((prevData) =>
           prevData.filter((request) => request.id !== userSignupRequestData.id)
         );
@@ -108,7 +93,7 @@ export function AdminSignupRequestApproval() {
   ) => {
     const userToken = await user?.getIdToken();
     try {
-      const response = await fetch("/api/admin/createUser", {
+      const response = await fetch("/api/admin/signupRequest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +105,6 @@ export function AdminSignupRequestApproval() {
       });
 
       if (response.ok) {
-        await deleteDocument("signup-requests", userSignupRequestData.id);
         setUserSignupRequestsData((prevData) =>
           prevData.filter((request) => request.id !== userSignupRequestData.id)
         );

@@ -8,7 +8,7 @@ import Navbar from "@/components/navbar/Navbar";
 export default function Dashboard() {
   return (
     <Navbar className="flex justify-center items-center" protectedRoute>
-      <div className="flex justify-center gap-4 flex-wrap h-[80vh]">
+      <div className="flex justify-center gap-4 flex-wrap h-[80vh] ">
         <div className="flex flex-col gap-4">
           <DashboardCharts />
           <DashboardChallenges />

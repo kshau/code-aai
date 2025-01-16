@@ -1,6 +1,5 @@
-import { CreateError, ErrorTypes } from "@/lib/errors";
+import { CreateError, ErrorTypes, runCode } from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { runCode } from "@/lib/runCode";
 import { Challenge, User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";

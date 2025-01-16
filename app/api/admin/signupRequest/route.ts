@@ -1,14 +1,73 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { sendEmail } from "@/lib/sendEmail";
+import {
+  ADMIN_EMAILS,
+  CreateError,
+  isAdmin,
+  sendEmail,
+} from "@/lib/adminUtils";
 import { User, UserSignupRequestData } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
+import { ErrorTypes } from "@/lib/adminUtils";
 import { randomBytes } from "crypto";
-import { ErrorTypes } from "@/lib/errors";
 
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS
-  ? process.env.ADMIN_EMAILS.split(",")
-  : [];
+export async function DELETE(request: NextRequest) {
+  await initAdmin();
+  const Firestore = firestore();
+
+  try {
+    const body = await request.json();
+    const { userToken, requestId, reason } = body;
+
+    const isAdminUser = await isAdmin(userToken);
+    if (!isAdminUser) {
+      return CreateError(ErrorTypes.UNAUTHORIZED);
+    }
+
+    const signupRequestDoc = await Firestore.collection("signup-requests")
+      .doc(requestId)
+      .get();
+
+    if (!signupRequestDoc.exists) {
+      return CreateError(ErrorTypes.INVALID_ARGUMENTS);
+    }
+
+    const signupRequestData = signupRequestDoc.data() as UserSignupRequestData;
+    const { parentEmail, username } = signupRequestData;
+
+    await sendEmail(
+      parentEmail,
+      "Code AAI Account Activation - Signup Denied!",
+      `
+        Dear Parent or Guardian,<br/><br/>
+
+        We are sorry to inform you that your account with username ${username} is unable to be registered on Code AAI. This is due to the following reason:<br/><br/>
+        ${reason}
+
+        <br/>
+        Feel free to sign up again after resolving the issue above. 
+            <br/>
+            <br/>
+        Best regards, <br/>
+        The Code AAI Team
+      `
+    );
+
+    await Firestore.collection("signup-requests").doc(requestId).delete();
+
+    return NextResponse.json({
+      message: "Signup request processed successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      {
+        error: "Failed to process the request",
+      },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   await initAdmin();
@@ -24,32 +83,20 @@ export async function POST(request: NextRequest) {
       .get();
 
     if (!signupRequestDoc.exists) {
-      return NextResponse.json(
-        { error: "Signup request not found" },
-        { status: 404 }
-      );
+      return CreateError(ErrorTypes.INVALID_ARGUMENTS);
     }
 
     const signupRequestData = signupRequestDoc.data() as UserSignupRequestData;
     const { parentEmail, username, codingExperience, gradeLevel } =
       signupRequestData;
 
-    const adminUser = await Auth.verifyIdToken(userToken);
-    if (
-      !adminUser ||
-      !adminUser.email ||
-      !ADMIN_EMAILS.includes(adminUser.email)
-    ) {
-      return NextResponse.json(ErrorTypes.UNAUTHORIZED);
+    const isAdminUser = await isAdmin(userToken);
+    if (!isAdminUser) {
+      return CreateError(ErrorTypes.UNAUTHORIZED);
     }
 
     if (!username) {
-      return NextResponse.json(
-        {
-          error: "Username is required",
-        },
-        { status: 400 }
-      );
+      return CreateError(ErrorTypes.INVALID_ARGUMENTS);
     }
 
     const randomPassword = randomBytes(16).toString("hex"); // 16 bytes = 32 hex characters
@@ -92,6 +139,7 @@ export async function POST(request: NextRequest) {
       gradeLevel: gradeLevel,
     };
     await Firestore.collection("users").doc(userRecord.uid).set(userDoc);
+    await Firestore.collection("signup-requests").doc(requestId).delete();
 
     return NextResponse.json({
       message: "User created successfully",

@@ -113,7 +113,7 @@ export default function LandingSignupForm() {
             </div>
 
             <div className="space-y-2">
-              <Label>Parent's Email</Label>
+              <Label>Parent Email</Label>
               <Input
                 id="email"
                 value={userSignupRequestData?.parentEmail}

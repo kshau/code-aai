@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  User,
-  UserSignupRequestData,
-  UserSignupRequestDataDocument,
-} from "@/lib/utils";
+import { User } from "@/lib/utils";
 import { useFirestore } from "@/hooks/useFirestore";
 import {
   Table,

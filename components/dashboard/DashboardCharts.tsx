@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { User, SolvedChallenge, isSameDay } from "@/lib/utils";
 import { Loading } from "../loading";
 
-import { Pie, PieChart, CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
   ChartConfig,
@@ -19,7 +19,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { NavbarUserMenu } from "../navbar/NavbarUserMenu";
 
 export default function DashboardCharts() {
   const { user, status } = useAuth();

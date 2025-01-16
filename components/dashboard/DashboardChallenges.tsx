@@ -7,13 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Challenge, ChallengeDifficulty, User } from "@/lib/utils";
 import Link from "next/link";
-import {
-  ArrowRightIcon,
-  Check,
-  CheckCheck,
-  SearchIcon,
-  SearchXIcon,
-} from "lucide-react";
+import { ArrowRightIcon, Check, SearchIcon, SearchXIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useAuth } from "@/hooks/useAuth";

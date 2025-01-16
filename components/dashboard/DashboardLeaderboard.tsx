@@ -128,9 +128,7 @@ export default function DashboardLeaderboard() {
                   key={leaderboardUser.uid}
                   className={leaderboardUser.uid === user.uid ? "bg-muted" : ""}
                 >
-                  <TableCell>
-                    {leaderboardData.indexOf(leaderboardUser) + 1}
-                  </TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="text-left">
                     {leaderboardUser.username}
                   </TableCell>

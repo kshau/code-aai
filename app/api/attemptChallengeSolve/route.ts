@@ -55,9 +55,9 @@ export async function POST(request: NextRequest) {
 
   try {
     await Promise.all(
-      challengeData.testCases.map(async (testCase, index) => {
-        let args: any[] = [];
-        let inputs: any[] = [];
+      challengeData.testCases.map(async (testCase) => {
+        const args: any[] = [];
+        const inputs: any[] = [];
 
         testCase.inputs.forEach((input) => {
           args.push(input.value);

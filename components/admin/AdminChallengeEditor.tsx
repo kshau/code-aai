@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useFirestore } from "@/hooks/useFirestore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Editor } from "@monaco-editor/react";
@@ -27,7 +26,7 @@ export function AdminChallengeEditor({
 
   const handleCreate = async () => {
     try {
-      let parsedData = JSON.parse(editorValue);
+      const parsedData = JSON.parse(editorValue);
       parsedData["id"] = parsedData["name"].toLowerCase().replaceAll(" ", "-");
 
       const challengeData: Challenge = parsedData as Challenge;
@@ -49,7 +48,7 @@ export function AdminChallengeEditor({
           variant: "default",
         });
       }
-    } catch (error: any) {
+    } catch {
       toast({
         title: "Failed to create challenge",
         description: "Failed to create challenge",

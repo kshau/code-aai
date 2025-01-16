@@ -1,10 +1,5 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
-import {
-  ADMIN_EMAILS,
-  CreateError,
-  isAdmin,
-  sendEmail,
-} from "@/lib/adminUtils";
+import { CreateError, isAdmin, sendEmail } from "@/lib/adminUtils";
 import { User, UserSignupRequestData } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";

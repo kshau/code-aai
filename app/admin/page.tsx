@@ -3,12 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/navbar/Navbar";
-import { Editor } from "@monaco-editor/react";
 import { AdminSignupRequestApproval } from "@/components/admin/AdminSignupRequestApproval";
 import { AdminChallengeEditor } from "@/components/admin/AdminChallengeEditor";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { AdminUserManager } from "@/components/admin/AdminUserManager";
 
 export default function Admin() {
@@ -34,13 +32,13 @@ export default function Admin() {
         const data = await res.json();
         setChallengeTemplate(data.challengeTemplate);
         setInitalSignupRequests(data.signupRequests);
-      } catch (error) {
+      } catch {
         router.push("/dashboard");
       }
     };
 
     getAdminResources();
-  }, [user]);
+  }, [router, user]);
 
   return (
     <Navbar className="flex justify-center items-center" protectedRoute>

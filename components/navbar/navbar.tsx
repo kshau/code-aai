@@ -31,10 +31,12 @@ export default function Navbar({
   protectedRoute = false,
 }: NavbarProps) {
   const { user, status, signIn, logOut } = useAuth();
-  const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const path = usePathname();
   const router = useRouter();
   const isActive = (href: string) => path === href;
+
+  // State to manage the modal visibility inside the Sheet
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (protectedRoute && status === "unauthenticated") {
@@ -105,9 +107,16 @@ export default function Navbar({
               {user ? (
                 <Button onClick={logOut}>Log out</Button>
               ) : (
-                <Button onClick={() => setIsLoginOpen(true)}>Login</Button>
+                <Button
+                  className="text-white"
+                  onClick={() => setModalOpen(true)}
+                >
+                  Log in
+                </Button>
               )}
             </nav>
+
+            {modalOpen && <NavbarLoginModal signIn={signIn} />}
           </SheetContent>
         </Sheet>
       </header>

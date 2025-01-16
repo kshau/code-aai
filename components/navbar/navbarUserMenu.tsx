@@ -16,7 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CogIcon, LogOut, MoonIcon, SunIcon } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,

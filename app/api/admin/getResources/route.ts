@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       challengeTemplate,
       signupRequests,
     });
-  } catch (error: any) {
+  } catch {
     return CreateError(ErrorTypes.INVALID_ARGUMENTS);
   }
 }

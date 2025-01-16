@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "Challenge created successfully",
     });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json(
       {
         message: "An error occurred while creating the challenge.",

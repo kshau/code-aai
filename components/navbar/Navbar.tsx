@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
@@ -36,7 +36,6 @@ export default function Navbar({
   const isActive = (href: string) => path === href;
 
   // State to manage the modal visibility inside the Sheet
-  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (protectedRoute && status === "unauthenticated") {
@@ -94,9 +93,7 @@ export default function Navbar({
             {status !== "unauthenticated" ? (
               <NavbarUserMenu />
             ) : (
-              <Button className="text-white">
-                <NavbarLoginModal signIn={signIn} />
-              </Button>
+              <NavbarLoginModal signIn={signIn} />
             )}
           </div>
         </nav>
@@ -123,16 +120,9 @@ export default function Navbar({
               {user ? (
                 <Button onClick={logOut}>Log out</Button>
               ) : (
-                <Button
-                  className="text-white"
-                  onClick={() => setModalOpen(true)}
-                >
-                  Log in
-                </Button>
+                <NavbarLoginModal signIn={signIn} />
               )}
             </nav>
-
-            {modalOpen && <NavbarLoginModal signIn={signIn} />}
           </SheetContent>
         </Sheet>
       </header>

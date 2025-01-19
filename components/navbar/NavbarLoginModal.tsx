@@ -29,7 +29,7 @@ export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span>Log in</span>
+        <Button className="text-white">Log in</Button>
       </DialogTrigger>
       <DialogContent className="max-w-96">
         <DialogHeader>
@@ -59,7 +59,7 @@ export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
           </div>
           <Button
             type="submit"
-            className="w-full"
+            className="w-full "
             onClick={() => {
               signIn(inputtedUsername, inputtedPassword);
               setTimeout(() => {

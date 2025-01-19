@@ -8,12 +8,14 @@ import { AdminChallengeEditor } from "@/components/admin/AdminChallengeEditor";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { AdminUserManager } from "@/components/admin/AdminUserManager";
+import { LoadingPage } from "@/components/loading";
 
 export default function Admin() {
   const { user } = useAuth();
   const router = useRouter();
   const [challengeTemplate, setChallengeTemplate] = useState("");
   const [initialSignupRequests, setInitalSignupRequests] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getAdminResources = async () => {
@@ -32,14 +34,20 @@ export default function Admin() {
         const data = await res.json();
         setChallengeTemplate(data.challengeTemplate);
         setInitalSignupRequests(data.signupRequests);
+        setIsLoading(false);
       } catch {
         router.push("/dashboard");
       }
     };
 
-    getAdminResources();
+    if (user) {
+      getAdminResources();
+    }
   }, [router, user]);
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
   return (
     <Navbar className="flex justify-center items-center" protectedRoute>
       <Tabs

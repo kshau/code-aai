@@ -44,7 +44,10 @@ export default function Navbar({
     }
   }, [protectedRoute, status, router]);
 
-  if (status === "loading" && protectedRoute) {
+  if (
+    (status === "loading" || status === "unauthenticated") &&
+    protectedRoute
+  ) {
     return <LoadingPage />;
   }
 
@@ -59,19 +62,32 @@ export default function Navbar({
 
         {/* Desktop Links */}
         <nav className="hidden sm:flex flex-row gap-6 items-center">
-          {links.map(({ href, name }, index) => (
-            <Link
-              key={index}
-              href={href}
-              className={`relative transition-all ${
-                isActive(href)
-                  ? "text-blue-500 font-bold"
-                  : "text-foreground/70 hover:text-blue-500"
-              }`}
-            >
-              {name}
-            </Link>
-          ))}
+          {links.map(({ href, name }, index) => {
+            if (status === "unauthenticated" && href === "/dashboard") {
+              return (
+                <span
+                  key={index}
+                  className="relative text-foreground/50 cursor-not-allowed"
+                >
+                  {name}
+                </span>
+              );
+            }
+
+            return (
+              <Link
+                key={index}
+                href={href}
+                className={`relative transition-all ${
+                  isActive(href)
+                    ? "text-blue-500 font-bold"
+                    : "text-foreground/70 hover:text-blue-500"
+                }`}
+              >
+                {name}
+              </Link>
+            );
+          })}
 
           {/* Auth Buttons */}
           <div className="flex items-center">
@@ -120,6 +136,7 @@ export default function Navbar({
           </SheetContent>
         </Sheet>
       </header>
+
       <main className={cn(className, "z-0 flex-grow")}>{children}</main>
     </div>
   );

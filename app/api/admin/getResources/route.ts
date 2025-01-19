@@ -38,8 +38,9 @@ export async function POST(request: NextRequest) {
     const isAdminUser = await isAdmin(userToken);
 
     if (!isAdminUser) {
-      return NextResponse.json(ErrorTypes.UNAUTHORIZED);
+      return CreateError(ErrorTypes.UNAUTHORIZED);
     }
+
     const snapshot = await Firestore.collection("signup-requests").get();
     const signupRequests = snapshot.docs.map((doc) => ({
       ...doc.data(),

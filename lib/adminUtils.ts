@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { auth } from "firebase-admin";
-import { Challenge, ChallengeTestCase } from "./utils";
+import { Challenge, ChallengeTestCase, ChallengeTestCases } from "./utils";
 
 export async function sendEmail(to: string, subject: string, text: string) {
   try {
@@ -41,7 +41,7 @@ export enum ErrorTypes {
 }
 
 export function CreateError(error: ErrorTypes) {
-  console.log(`Error: ${error.toString}`);
+  console.log(`Error: ${error.valueOf()}`);
   switch (error) {
     case ErrorTypes.INVALID_ARGUMENTS:
       return NextResponse.json(
@@ -112,20 +112,24 @@ export async function isAdmin(userToken: any) {
   }
 }
 
-export function validateChallengeData(
-  data: any
-): data is Omit<Challenge, "id"> {
+export function validateChallengeData(data: any): data is Challenge {
   return (
+    typeof data.id === "string" &&
     typeof data.name === "string" &&
     typeof data.description === "string" &&
     ["easy", "medium", "hard"].includes(data.difficulty) &&
+    typeof data.points === "number"
+  );
+}
+
+export function validateTestCases(
+  data: any
+): data is Omit<ChallengeTestCases, "id"> {
+  return (
     Array.isArray(data.testCases) &&
     data.testCases.every(
       (testCase: ChallengeTestCase) =>
-        typeof testCase.inputs === "string" &&
-        typeof testCase.expectedOutput === "string"
-    ) &&
-    typeof data.solved === "boolean" &&
-    typeof data.points === "number"
+        Array.isArray(testCase.inputs) && testCase.expectedOutput !== undefined
+    )
   );
 }

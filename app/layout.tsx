@@ -27,8 +27,7 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
+          defaultTheme="light"
           disableTransitionOnChange
         >
           <ToastProvider>

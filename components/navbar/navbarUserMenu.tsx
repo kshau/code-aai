@@ -54,7 +54,7 @@ export function NavbarUserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="secondary"
+            variant="outline"
             size="icon"
             className="rounded-full w-9 h-9"
           >

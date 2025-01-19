@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
   const { editorContent, challengeId, userToken }: attemptChallengeData =
     await request.json();
 
+  // Verify the user
   const user = await Auth.verifyIdToken(userToken);
   if (!user || !user.email) {
     return CreateError(ErrorTypes.UNAUTHORIZED);
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
   const userData: User = usersData.docs[0].data() as User;
   const userDoc = usersData.docs[0];
 
+  // Fetch the challenge data
   const challenges = await Firestore.collection("challenges")
     .where("id", "==", challengeId)
     .get();
@@ -42,9 +44,22 @@ export async function POST(request: NextRequest) {
   }
 
   const challengeData: Challenge = challenges.docs[0].data() as Challenge;
+
+  const testCasesDoc = await Firestore.collection("challenge-testcases")
+    .doc(challengeData.id)
+    .get();
+
+  console.log(testCasesDoc.exists);
+
+  if (!testCasesDoc.exists) {
+    return CreateError(ErrorTypes.INVALID_ARGUMENTS);
+  }
+
+  const testCases = testCasesDoc.data()?.testCases || [];
   let pass = 0;
   let failedTestCase: any = null;
 
+  // Check if the challenge is already solved
   if (
     userData.solvedChallenges.some(
       (challenge) => challenge.id === challengeData.id
@@ -54,12 +69,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Process and validate test cases
     await Promise.all(
-      challengeData.testCases.map(async (testCase) => {
+      testCases.map(async (testCase: any) => {
         const args: any[] = [];
         const inputs: any[] = [];
 
-        testCase.inputs.forEach((input) => {
+        testCase.inputs.forEach((input: any) => {
           args.push(input.value);
           inputs.push({ name: input.name, value: input.value });
         });
@@ -73,13 +89,14 @@ export async function POST(request: NextRequest) {
           failedTestCase = {
             inputs: inputs,
             expectedOutput: testCase.expectedOutput,
-            recievedOutput: result.stdout,
+            receivedOutput: result.stdout,
           };
         }
       })
     );
 
-    if (pass === challengeData.testCases.length) {
+    // Update user data if all test cases pass
+    if (pass === testCases.length) {
       await userDoc.ref.update({
         points: userData.points + challengeData.points,
         solvedChallenges: [
@@ -93,11 +110,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Return results
     return NextResponse.json(
       {
         failedTestCase: failedTestCase,
         passedCases: pass,
-        totalCases: challengeData.testCases.length,
+        totalCases: testCases.length,
       },
       { status: 200 }
     );

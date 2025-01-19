@@ -38,12 +38,12 @@ export default function DashboardChallenges() {
   >([]);
 
   const { getDocuments, getUserData } = useFirestore();
-  const { user } = useAuth();
+  const { user, status } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchChallenges = async () => {
-      if (user) {
+      if (user && status == "authenticated") {
         try {
           const challenges: Challenge[] = await getDocuments<Challenge>(
             "challenges"
@@ -56,7 +56,7 @@ export default function DashboardChallenges() {
     };
 
     fetchChallenges();
-  }, [user, getDocuments]);
+  }, [user, status, getDocuments]);
 
   useEffect(() => {
     const fetchUserData = async () => {

@@ -24,6 +24,7 @@ import Navbar from "@/components/navbar/Navbar";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "next-themes";
 
 interface ChallengeFailedTestCase {
   inputs: ChallengeTestCaseInput[];
@@ -49,6 +50,7 @@ export default function ChallengePage() {
 
   const [isSolvedAlready, setIsSolvedAlready] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { theme } = useTheme();
 
   const attemptChallengeSolve = async () => {
     try {
@@ -114,7 +116,7 @@ export default function ChallengePage() {
             height="70vh"
             width="50vw"
             defaultLanguage="python"
-            theme="custom-light"
+            theme={theme === "light" ? "custom-light" : "custom-dark"}
             value={editorContent}
             onChange={(value) => {
               setEditorContent(value || "");

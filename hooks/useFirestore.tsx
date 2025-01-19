@@ -15,7 +15,6 @@ import {
   DocumentData,
   WithFieldValue,
   UpdateData,
-  DocumentReference,
 } from "firebase/firestore";
 import { User } from "@/lib/utils";
 
@@ -68,10 +67,20 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  async function getUserData(uid: string) {
-    const users = await queryDocuments<User>("users", "uid", uid);
-    return users[0];
-  }
+  const getUserData = async (uid: string): Promise<User> => {
+    try {
+      const userDocRef = doc(firestore, "users", uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        return { ...userDocSnap.data() } as User;
+      } else {
+        throw new Error(`User document with UID '${uid}' not found.`);
+      }
+    } catch (error) {
+      console.error(`Error fetching user data for UID '${uid}':`, error);
+      throw error;
+    }
+  };
 
   const getDocument = async <T,>(
     collectionName: string,
@@ -143,12 +152,9 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     data: UpdateData<T>
   ): Promise<void> => {
     try {
-      const docRef = doc(
-        firestore,
-        collectionName,
-        documentId
-      ) as DocumentReference<DocumentData, T>;
+      const docRef = doc(firestore, collectionName, documentId);
       await updateDoc(docRef, data);
+      console.log(data);
     } catch (error) {
       console.error(
         `Error updating document in collection '${collectionName}':`,
@@ -163,13 +169,8 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     data: Partial<User>
   ): Promise<void> => {
     try {
-      const users = await queryDocuments<any>("users", "uid", uid);
-      if (users.length > 0) {
-        const userDocId = users[0].id;
-        await editDocument<User>("users", userDocId, data);
-      } else {
-        throw new Error(`User with UID '${uid}' not found.`);
-      }
+      const userDocRef = doc(firestore, "users", uid);
+      await updateDoc(userDocRef, data);
     } catch (error) {
       console.error(`Error updating user data for UID '${uid}':`, error);
       throw error;

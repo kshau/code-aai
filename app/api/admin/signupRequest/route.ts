@@ -36,7 +36,7 @@ export async function DELETE(request: NextRequest) {
       `
         Dear Parent or Guardian,<br/><br/>
 
-        We are sorry to inform you that your account with username ${username} is unable to be registered on Code AAI. This is due to the following reason:<br/><br/>
+        We are sorry to inform you that your account with username "${username}" is unable to be registered on Code AAI. This is due to the following reason:<br/><br/>
         ${reason}
 
         <br/>
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       `
         Dear Parent or Guardian,<br/><br/>
     
-        We are pleased to inform you that your child, with the username ${username}, has been successfully approved to use Code AAI!<br/>
+        We are pleased to inform you that your child, with the username "${username}", has been successfully approved to use Code AAI!<br/>
     
         To complete the registration process and set up your child's account, please click <a href="${resetLink}">this link</a> to create a secure password for their account<br/>
     

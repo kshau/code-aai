@@ -42,11 +42,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (username: string, password: string) => {
     if (username && password) {
-      await signInWithEmailAndPassword(
-        auth,
-        `${username}@codeaai.org`,
-        password
-      );
+      if (username.includes("@")) {
+        await signInWithEmailAndPassword(auth, `${username}`, password);
+      } else {
+        await signInWithEmailAndPassword(
+          auth,
+          `${username}@codeaai.org`,
+          password
+        );
+      }
     }
   };
 

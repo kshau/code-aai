@@ -39,9 +39,11 @@ export interface Challenge {
   name: string;
   description: string;
   difficulty: ChallengeDifficulty;
-  testCases: ChallengeTestCase[];
-  solved: boolean;
   points: number;
+}
+
+export interface ChallengeTestCases {
+  testCases: ChallengeTestCase[];
 }
 
 export interface ChallengeTestCase {

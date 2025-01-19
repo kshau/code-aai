@@ -1,32 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ErrorTypes, isAdmin, validateChallengeData } from "@/lib/adminUtils";
+import {
+  CreateError,
+  ErrorTypes,
+  isAdmin,
+  validateChallengeData,
+  validateTestCases,
+} from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
 import { firestore } from "firebase-admin";
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize Firebase Admin
     await initAdmin();
     const Firestore = firestore();
 
+    // Parse the request body
     const body = await request.json();
     const { userToken, challengeData } = body;
 
+    // Validate if the user is an admin
     const isAdminUser = await isAdmin(userToken);
 
     if (!isAdminUser) {
-      return NextResponse.json(ErrorTypes.UNAUTHORIZED, { status: 403 });
+      return CreateError(ErrorTypes.UNAUTHORIZED);
     }
 
     if (!validateChallengeData(challengeData)) {
-      return NextResponse.json(ErrorTypes.INVALID_ARGUMENTS, { status: 400 });
+      return CreateError(ErrorTypes.INVALID_ARGUMENTS);
     }
 
-    await Firestore.collection("challenges").add(challengeData);
+    if (!validateTestCases(challengeData)) {
+      return CreateError(ErrorTypes.INVALID_ARGUMENTS);
+    }
+
+    const { testCases, ...challengeWithoutTestCases } = challengeData;
+    await Firestore.collection("challenges")
+      .doc(challengeData.id)
+      .set(challengeWithoutTestCases);
+
+    if (testCases) {
+      await Firestore.collection("challenge-testcases")
+        .doc(challengeData.id)
+        .set({ testCases });
+    }
 
     return NextResponse.json({
       message: "Challenge created successfully",
     });
-  } catch {
+  } catch (error) {
+    console.error("Error creating challenge:", error);
     return NextResponse.json(
       {
         message: "An error occurred while creating the challenge.",

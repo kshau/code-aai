@@ -54,9 +54,9 @@ export default function Navbar({
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 w-full flex justify-between items-center px-6 sm:px-12 py-3 z-50 bg-background/80 backdrop-blur-lg border-b">
         {/* Logo and Brand */}
-        <Link href="/" className="flex items-center justify-center">
-          <Image src={logo} alt="Logo" width={50} height={50} className="rounded-full"/>
-          <span className="font-bold text-xl sm:text-2xl ml-2">CodeAAI</span>
+        <Link href="/" className="flex items-center justify-center gap-x-1">
+          <Image src={logo} alt="Logo" width={40} height={40} className="rounded-full"/>
+          <span className="font-bold text-lg sm:text-xl ml-2">CodeAAI</span>
         </Link>
 
         {/* Desktop Links */}

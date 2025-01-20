@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { XIcon } from "lucide-react";
 
 interface NavbarLoginModalProps {
   signIn: (user: string, password: string) => void;
@@ -20,14 +21,40 @@ interface NavbarLoginModalProps {
 export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
   const [inputtedUsername, setInputtedUsername] = useState<string>("");
   const [inputtedPassword, setInputtedPassword] = useState<string>("");
+  const [invalidCredentials, setInvalidCredentials] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
-    signIn(inputtedUsername, inputtedPassword);
+
+    try {
+
+      await signIn(inputtedUsername, inputtedPassword);
+
+      setTimeout(() => {
+        location.href = "/dashboard";
+      }, 500);
+
+    } catch (error: any) {
+
+      if (error.code == "auth/invalid-credential") {
+        setInvalidCredentials(true);
+      }
+      
+      else {
+        console.error(error);
+      }
   };
+}
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setInputtedUsername("");
+          setInputtedPassword("");
+          setInvalidCredentials(false);
+        }}}
+      >
       <DialogTrigger asChild>
         <Button className="text-white">Log in</Button>
       </DialogTrigger>
@@ -57,14 +84,19 @@ export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
               required
             />
           </div>
+
+          {invalidCredentials && (
+            <div className="text-difficulty-hard font-semibold mt-2 flex flex-row gap-x-1">
+              <XIcon />
+              <span>No user found with these credentials!</span>
+            </div>
+          )}
+
           <Button
             type="submit"
             className="w-full "
             onClick={() => {
               signIn(inputtedUsername, inputtedPassword);
-              setTimeout(() => {
-                location.href = "/dashboard";
-              }, 500);
             }}
           >
             Log in

@@ -55,7 +55,7 @@ export default function Navbar({
       <header className="sticky top-0 w-full flex justify-between items-center px-6 sm:px-12 py-3 z-50 bg-background/80 backdrop-blur-lg border-b">
         {/* Logo and Brand */}
         <Link href="/" className="flex items-center justify-center">
-          <Image src={logo} alt="Logo" width={30} height={30} />
+          <Image src={logo} alt="Logo" width={50} height={50} className="rounded-full"/>
           <span className="font-bold text-xl sm:text-2xl ml-2">CodeAAI</span>
         </Link>
 

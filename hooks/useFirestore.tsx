@@ -154,7 +154,6 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const docRef = doc(firestore, collectionName, documentId);
       await updateDoc(docRef, data);
-      console.log(data);
     } catch (error) {
       console.error(
         `Error updating document in collection '${collectionName}':`,

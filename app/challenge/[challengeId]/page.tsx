@@ -19,12 +19,22 @@ import {
   Challenge,
   ChallengeTestCaseInput,
   loadCustomDarkEditorTheme,
+  SupportedProgrammingLanguage,
 } from "@/lib/utils";
 import Navbar from "@/components/navbar/Navbar";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "next-themes";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ChallengeFailedTestCase {
   inputs: ChallengeTestCaseInput[];
@@ -47,6 +57,8 @@ export default function ChallengePage() {
   const [editorContent, setEditorContent] = useState("");
   const [codeSubmissionResult, setCodeSubmissionResult] =
     useState<ChallengeSubmissionResult | null>(null);
+  const [language, setLanguage] =
+    useState<SupportedProgrammingLanguage>("python");
 
   const [isSolvedAlready, setIsSolvedAlready] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -62,6 +74,7 @@ export default function ChallengePage() {
           editorContent,
           challengeId: params.challengeId,
           userToken,
+          language: "python",
         },
         { withCredentials: true }
       );
@@ -111,17 +124,36 @@ export default function ChallengePage() {
   return (
     <Navbar className="flex items-center justify-center mb-16">
       <div className="flex gap-y-4">
-        <Card className="p-6 flex flex-wrap">
+        <Card className="p-6 flex flex-wrap relative">
           <Editor
             height="70vh"
             width="50vw"
-            defaultLanguage="python"
+            language={language}
             theme={theme === "light" ? "custom-light" : "custom-dark"}
             value={editorContent}
             onChange={(value) => {
               setEditorContent(value || "");
             }}
           />
+
+          <Select
+            onValueChange={(value) =>
+              setLanguage(value as SupportedProgrammingLanguage)
+            }
+            value={language}
+          >
+            <SelectTrigger className="w-40 absolute bottom-4 right-12">
+              <SelectValue placeholder="Python" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Languages</SelectLabel>
+                <SelectItem value="python">Python</SelectItem>
+                <SelectItem value="javascript">JavaScript</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
         </Card>
         <div className="flex flex-col pl-2 w-[20vw] gap-y-6">
           <Card className="relative h-full p-4">

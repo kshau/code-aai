@@ -105,3 +105,16 @@ export function isSameDay(timestamp1: number, timestamp2: string) {
 export interface UserSignupRequestDataDocument extends UserSignupRequestData {
   id: string;
 }
+
+export function removeJSONCodeBlockMarkers(str: string) {
+  // Trim the string to remove any leading/trailing whitespace or newlines
+  const trimmed = str.trim();
+  
+  // Check and remove markers if present
+  if (trimmed.startsWith("```json") && trimmed.endsWith("```")) {
+    return trimmed.slice(7, -3).trim();
+  }
+  return str;
+}
+
+export type SupportedProgrammingLanguage = "python" | "javascript";

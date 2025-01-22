@@ -65,7 +65,6 @@ export default function DashboardCharts() {
         ),
       });
     }
-    console.log(newPointsOverTimeChartData)
     setPointsOverTimeChartData(newPointsOverTimeChartData);
   };
 

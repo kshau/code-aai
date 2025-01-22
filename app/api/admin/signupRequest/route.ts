@@ -110,12 +110,9 @@ export async function POST(request: NextRequest) {
       `
         Dear Parent or Guardian,<br/><br/>
     
-        We are pleased to inform you that your child, with the username "${username}", has been successfully approved to use Code AAI!<br/>
-    
-        To complete the registration process and set up your child's account, please click <a href="${resetLink}">this link</a> to create a secure password for their account<br/>
-    
-        Once the password is set, your child will be able to log in and begin using the platform. You can access the official Code AAI website here: <a href="https://codeaai.org">CodeAAI.org</a>.<br/>
-    
+        We are pleased to inform you that your child, with the username "${username}", has been successfully approved to use Code AAI!${" "}
+        To complete the registration process and set up your child's account, please click <a href="${resetLink}">this link</a> to create a secure password for their account${" "}
+        Once the password is set, your child will be able to log in and begin using the platform. You can access the official Code AAI website here: <a href="https://codeaai.org">CodeAAI.org</a>.${" "}
         If you have any questions or need assistance, please don't hesitate to contact us.<br/><br/>
     
         Best regards, <br/>

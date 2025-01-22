@@ -8,6 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Challenge } from "@/lib/utils";
 import axios from "axios";
 import { useAuth } from "@/hooks/useAuth";
+import { LoaderCircle, PlusIcon, SparklesIcon, XIcon } from "lucide-react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { kMaxLength } from "buffer";
 
 export function AdminChallengeEditor({
   challengeTemplate,
@@ -44,14 +50,14 @@ export function AdminChallengeEditor({
       if (res.request.ok) {
         toast({
           title: "Success",
-          description: "Challenge has been made",
+          description: "Challenge has been made!",
           variant: "default",
         });
       }
     } catch {
       toast({
-        title: "Failed to create challenge",
-        description: "Failed to create challenge",
+        title: "Failure",
+        description: "Failed to create challenge!",
         variant: "destructive",
       });
     }
@@ -62,22 +68,124 @@ export function AdminChallengeEditor({
   }, [challengeTemplate]);
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 ">
       <Editor
-        height="23rem"
+        className="h-[40rem]"
         defaultLanguage="json"
         value={editorValue}
         onChange={handleEditorChange}
+        width="60rem"
       />
-      <Button onClick={handleCreate}>Create</Button>
-      <Button
-        onClick={() => {
-          setEditorValue(challengeTemplate);
-        }}
-        className="ml-2"
-      >
-        Reset
-      </Button>
+      <div className="mt-2 space-x-2">
+        <AdminChallengeEditorGenerateDialog setEditorValue={setEditorValue}/>
+        <Button onClick={handleCreate}>
+          <PlusIcon/>
+          Create
+        </Button>
+        <Button
+          onClick={() => {
+            setEditorValue(challengeTemplate);
+          }}
+          variant="destructive"
+        >
+          <XIcon/>
+          Reset
+        </Button>
+      </div>
+      
     </Card>
   );
+}
+
+interface AdminChallengeEditorGenerateDialogProps {
+  setEditorValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function AdminChallengeEditorGenerateDialog({ setEditorValue }: AdminChallengeEditorGenerateDialogProps) {
+
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [prompt, setPrompt] = useState<string>("");
+  const [numTestCases, setNumTestCases] = useState<number>(5);
+  const [generationLoading, setGenerationLoading] = useState<boolean>(false);
+
+  const { toast } = useToast();
+
+  const handleGenerate = async () => {
+    setGenerationLoading(true);
+    try {
+      const res = await axios.post(
+        "/api/admin/generateChallenge",
+        {
+          prompt,
+          numTestCases
+        },
+        { withCredentials: true }
+      );
+
+      const {challengeData} = res.data;
+        
+        setEditorValue(JSON.stringify(challengeData, null, 2));
+        setDialogOpen(false);
+        setGenerationLoading(false);
+
+        toast({
+          title: "Success",
+          description: "Challenge generation was successful!",
+          variant: "default",
+        });
+    } catch {
+
+      toast({
+        title: "Failure",
+        description: "Failed to generate challenge!",
+        variant: "destructive",
+      });
+
+    }
+  }
+
+  return (
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger onClick={() => setDialogOpen(true)}>
+        <Button variant="outline">
+          <SparklesIcon/>
+          Generate
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            Generate a Challenge
+          </DialogTitle>
+          <DialogDescription>
+            Use Gemini 1.5 to generate your own challenge using artificial intelligence.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Prompt</Label>
+            <Textarea onChange={e => {setPrompt(e.target.value)}} maxLength={256}/>
+          </div>
+          <div className="space-y-2">
+            <Label>Number of test cases</Label>
+            <Input type="number" className="w-24" value={numTestCases} onChange={e => {setNumTestCases(parseInt(e.target.value))}} max={20} min={5}/>
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose onClick={() => setDialogOpen(false)}>
+            <Button variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+          <Button type="submit" onClick={handleGenerate} disabled={!prompt || !numTestCases || generationLoading}>
+            {generationLoading && (
+              <LoaderCircle className="animate-spin"/>
+            )}
+            Generate
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+
 }

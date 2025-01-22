@@ -1,13 +1,14 @@
 import { CreateError, ErrorTypes, runCode } from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { Challenge, User } from "@/lib/utils";
+import { Challenge, SupportedProgrammingLanguage, User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
-interface attemptChallengeData {
+interface AttemptChallengeData {
   editorContent: string;
   challengeId: string;
   userToken: string;
+  language: SupportedProgrammingLanguage;
 }
 
 export async function POST(request: NextRequest) {
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
   const Auth = auth();
   const Firestore = firestore();
 
-  const { editorContent, challengeId, userToken }: attemptChallengeData =
+  const { editorContent, challengeId, userToken, language }: AttemptChallengeData =
     await request.json();
 
   // Verify the user
@@ -49,8 +50,6 @@ export async function POST(request: NextRequest) {
     .doc(challengeData.id)
     .get();
 
-  console.log(testCasesDoc.exists);
-
   if (!testCasesDoc.exists) {
     return CreateError(ErrorTypes.INVALID_ARGUMENTS);
   }
@@ -80,7 +79,7 @@ export async function POST(request: NextRequest) {
           inputs.push({ name: input.name, value: input.value });
         });
 
-        const result = await runCode(editorContent, args);
+        const result = await runCode(editorContent, args, language);
         const output: string = result.stdout || "";
 
         if (output.trim() === testCase.expectedOutput.trim()) {

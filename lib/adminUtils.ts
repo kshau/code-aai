@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { auth } from "firebase-admin";
-import { Challenge, ChallengeTestCase, ChallengeTestCases } from "./utils";
+import { Challenge, ChallengeTestCase, ChallengeTestCases, SupportedProgrammingLanguage } from "./utils";
 
 export async function sendEmail(to: string, subject: string, text: string) {
   try {
@@ -68,15 +68,15 @@ export function CreateError(error: ErrorTypes) {
 
 const { RAPIDAPI_API_KEY } = process.env;
 
-export async function runCode(code: string, args: any[]) {
+export async function runCode(code: string, args: any[], language: SupportedProgrammingLanguage) {
   const res = await axios.post(
     "https://onecompiler-apis.p.rapidapi.com/api/v1/run",
     {
-      language: "python",
+      language,
       stdin: args.join(" "),
       files: [
         {
-          name: "index.py",
+          name: `index.${language == "python" ? "py" : "js"}`,
           content: code,
         },
       ],

@@ -59,7 +59,7 @@ export default function Admin() {
           <TabsTrigger value="create-challenge">Create Challenge</TabsTrigger>
           <TabsTrigger value="delete-users">Delete Users</TabsTrigger>
         </TabsList>
-        <div className="h-96 w-[55vw]">
+        <div className="h-96 max-w-[70rem]">
           <TabsContent value="signup-reuqests">
             <AdminSignupRequestApproval
               signupRequests={initialSignupRequests}

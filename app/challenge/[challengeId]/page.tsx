@@ -99,6 +99,23 @@ export default function ChallengePage() {
     setEditorContent("");
   };
 
+  const setDescription = (language: SupportedProgrammingLanguage, challengeData: Challenge) => {
+    const text = `\n${challengeData.name}:\n${challengeData.description}\n\nYou are using ${language}\n`;
+    switch (language) {
+      case "python":
+        setEditorContent(
+          `'''${text}'''\n`
+        );
+        break;
+      default:
+        setEditorContent(
+          `/*${text}*/\n`
+        );
+        break;
+    }
+
+  }
+
   useEffect(() => {
     loadCustomDarkEditorTheme();
   }, []);
@@ -113,9 +130,7 @@ export default function ChallengePage() {
 
       const challengeData = challengeDatas[0];
       setChallengeData(challengeData);
-      setEditorContent(
-        `'''\n${challengeData.name}:\n${challengeData.description}\n'''\n`
-      );
+      setDescription(language, challengeData!)
     };
 
     getChallengeData();
@@ -137,9 +152,11 @@ export default function ChallengePage() {
           />
 
           <Select
-            onValueChange={(value) =>
-              setLanguage(value as SupportedProgrammingLanguage)
-            }
+            onValueChange={(value) => {
+              const lang = value as SupportedProgrammingLanguage;
+              setLanguage(lang)
+              setDescription(lang, challengeData!)
+            }}
             value={language}
           >
             <SelectTrigger className="w-40 absolute bottom-4 right-12">
@@ -150,6 +167,8 @@ export default function ChallengePage() {
                 <SelectLabel>Languages</SelectLabel>
                 <SelectItem value="python">Python</SelectItem>
                 <SelectItem value="javascript">JavaScript</SelectItem>
+                <SelectItem value="c">C</SelectItem>
+                <SelectItem value="java">Java</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -189,13 +208,12 @@ export default function ChallengePage() {
                         {codeSubmissionResult?.failedTestCase.inputs
                           .map(
                             (input, index) =>
-                              `${input.name} = ${input.value}${
-                                index <
+                              `${input.name} = ${input.value}${index <
                                 codeSubmissionResult.failedTestCase!.inputs
                                   .length -
-                                  1
-                                  ? ", "
-                                  : ";"
+                                1
+                                ? ", "
+                                : ";"
                               }`
                           )
                           .join("")}

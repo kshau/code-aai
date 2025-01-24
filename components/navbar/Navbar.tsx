@@ -8,7 +8,7 @@ import { Menu } from "lucide-react";
 import { LoadingPage } from "../loading";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import logo from "@/public/logo.png";
+import logo from "@/public/logo.svg";
 import { useAuth } from "@/hooks/useAuth";
 import { NavbarLoginModal } from "./NavbarLoginModal";
 import { NavbarUserMenu } from "./NavbarUserMenu";
@@ -55,7 +55,7 @@ export default function Navbar({
       <header className="sticky top-0 w-full flex justify-between items-center px-6 sm:px-12 py-3 z-50 bg-background/80 backdrop-blur-lg border-b">
         {/* Logo and Brand */}
         <Link href="/" className="flex items-center justify-center gap-x-1">
-          <Image src={logo} alt="Logo" width={40} height={40} className="rounded-full"/>
+          <Image src={logo} alt="Logo" width={40} height={40} className="rounded-full" />
           <span className="font-bold text-lg sm:text-xl ml-2">CodeAAI</span>
         </Link>
 
@@ -77,11 +77,10 @@ export default function Navbar({
               <Link
                 key={index}
                 href={href}
-                className={`relative transition-all ${
-                  isActive(href)
+                className={`relative transition-all ${isActive(href)
                     ? "text-blue-500 font-bold"
                     : "text-foreground/70 hover:text-blue-500"
-                }`}
+                  }`}
               >
                 {name}
               </Link>

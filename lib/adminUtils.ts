@@ -19,7 +19,19 @@ export async function sendEmail(to: string, subject: string, text: string) {
       from: process.env.NODE_EMAIL,
       to,
       subject,
-      html: text,
+      html: `
+    <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+        <div style="padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
+          <img src="https://codeaai.org/logo.svg" alt="Welcome" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px 8px 0 0; display: block;">
+          <h1 style="color: #333; margin: 0;">CodeAAI</h1>
+        </div>
+        <div style="padding: 20px;">
+          ${text}
+        </div>
+      </div>
+    </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions);

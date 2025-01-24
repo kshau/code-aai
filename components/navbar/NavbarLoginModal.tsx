@@ -13,12 +13,14 @@ import {
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface NavbarLoginModalProps {
   signIn: (user: string, password: string) => void;
 }
 
 export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
+  const router = useRouter();
   const [inputtedUsername, setInputtedUsername] = useState<string>("");
   const [inputtedPassword, setInputtedPassword] = useState<string>("");
   const [invalidCredentials, setInvalidCredentials] = useState<boolean>(false);
@@ -29,32 +31,26 @@ export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
 
     try {
 
-      await signIn(inputtedUsername, inputtedPassword);
-
-      setTimeout(() => {
-        location.href = "/dashboard";
-      }, 500);
+      signIn(inputtedUsername, inputtedPassword);
+      router.push("/dashboard")
 
     } catch (error: any) {
-
       if (error.code == "auth/invalid-credential") {
         setInvalidCredentials(true);
       }
-      
-      else {
-        console.error(error);
-      }
-  };
-}
+
+    };
+  }
 
   return (
     <Dialog onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          setInputtedUsername("");
-          setInputtedPassword("");
-          setInvalidCredentials(false);
-        }}}
-      >
+      if (!isOpen) {
+        setInputtedUsername("");
+        setInputtedPassword("");
+        setInvalidCredentials(false);
+      }
+    }}
+    >
       <DialogTrigger asChild>
         <Button className="text-white">Log in</Button>
       </DialogTrigger>

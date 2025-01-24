@@ -1,3 +1,5 @@
+import { CreateError, ErrorTypes, isAdmin } from "@/lib/adminUtils";
+import { initAdmin } from "@/lib/firebase-admin/config";
 import { removeJSONCodeBlockMarkers } from "@/lib/utils";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
@@ -32,10 +34,19 @@ async function geminiGenerateContent(prompt: string) {
 }
 
 export async function POST(request: NextRequest) {
+    // Initialize Firebase Admin
+    await initAdmin();
+
+
 
     try {
-        const { prompt, numTestCases } = await request.json();
+        const { prompt, userToken, numTestCases } = await request.json();
+        const isAdminUser = await isAdmin(userToken);
 
+        if (!isAdminUser) {
+          return CreateError(ErrorTypes.UNAUTHORIZED);
+        }
+        
         const geminiRes = await geminiGenerateContent(`
             
             I have a website where users can create and play Python programming challenges.

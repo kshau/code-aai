@@ -13,7 +13,6 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { kMaxLength } from "buffer";
 
 export function AdminChallengeEditor({
   challengeTemplate,
@@ -70,16 +69,16 @@ export function AdminChallengeEditor({
   return (
     <Card className="p-4 ">
       <Editor
-        className="h-[40rem]"
+        className="h-[40vh]"
         defaultLanguage="json"
         value={editorValue}
         onChange={handleEditorChange}
         width="60rem"
       />
       <div className="mt-2 space-x-2">
-        <AdminChallengeEditorGenerateDialog setEditorValue={setEditorValue}/>
-        <Button onClick={handleCreate}>
-          <PlusIcon/>
+        <AdminChallengeEditorGenerateDialog setEditorValue={setEditorValue} />
+        <Button onClick={handleCreate} className="text-white">
+          <PlusIcon />
           Create
         </Button>
         <Button
@@ -88,11 +87,11 @@ export function AdminChallengeEditor({
           }}
           variant="destructive"
         >
-          <XIcon/>
+          <XIcon />
           Reset
         </Button>
       </div>
-      
+
     </Card>
   );
 }
@@ -107,32 +106,36 @@ function AdminChallengeEditorGenerateDialog({ setEditorValue }: AdminChallengeEd
   const [prompt, setPrompt] = useState<string>("");
   const [numTestCases, setNumTestCases] = useState<number>(5);
   const [generationLoading, setGenerationLoading] = useState<boolean>(false);
-
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const handleGenerate = async () => {
     setGenerationLoading(true);
+
     try {
+      const userToken = await user?.getIdToken();
+
       const res = await axios.post(
         "/api/admin/generateChallenge",
         {
+          userToken,
           prompt,
           numTestCases
         },
         { withCredentials: true }
       );
 
-      const {challengeData} = res.data;
-        
-        setEditorValue(JSON.stringify(challengeData, null, 2));
-        setDialogOpen(false);
-        setGenerationLoading(false);
+      const { challengeData } = res.data;
 
-        toast({
-          title: "Success",
-          description: "Challenge generation was successful!",
-          variant: "default",
-        });
+      setEditorValue(JSON.stringify(challengeData, null, 2));
+      setDialogOpen(false);
+      setGenerationLoading(false);
+
+      toast({
+        title: "Success",
+        description: "Challenge generation was successful!",
+        variant: "default",
+      });
     } catch {
 
       toast({
@@ -148,7 +151,7 @@ function AdminChallengeEditorGenerateDialog({ setEditorValue }: AdminChallengeEd
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger onClick={() => setDialogOpen(true)}>
         <Button variant="outline">
-          <SparklesIcon/>
+          <SparklesIcon />
           Generate
         </Button>
       </DialogTrigger>
@@ -164,11 +167,11 @@ function AdminChallengeEditorGenerateDialog({ setEditorValue }: AdminChallengeEd
         <div className="space-y-4">
           <div className="space-y-2">
             <Label>Prompt</Label>
-            <Textarea onChange={e => {setPrompt(e.target.value)}} maxLength={256}/>
+            <Textarea onChange={e => { setPrompt(e.target.value) }} maxLength={256} />
           </div>
           <div className="space-y-2">
             <Label>Number of test cases</Label>
-            <Input type="number" className="w-24" value={numTestCases} onChange={e => {setNumTestCases(parseInt(e.target.value))}} max={20} min={5}/>
+            <Input type="number" className="w-24" value={numTestCases} onChange={e => { setNumTestCases(parseInt(e.target.value)) }} max={20} min={5} />
           </div>
         </div>
         <DialogFooter>
@@ -179,7 +182,7 @@ function AdminChallengeEditorGenerateDialog({ setEditorValue }: AdminChallengeEd
           </DialogClose>
           <Button type="submit" onClick={handleGenerate} disabled={!prompt || !numTestCases || generationLoading}>
             {generationLoading && (
-              <LoaderCircle className="animate-spin"/>
+              <LoaderCircle className="animate-spin" />
             )}
             Generate
           </Button>

@@ -41,16 +41,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (username: string, password: string) => {
-    if (username && password) {
-      if (username.includes("@")) {
-        await signInWithEmailAndPassword(auth, `${username}`, password);
-      } else {
-        await signInWithEmailAndPassword(
-          auth,
-          `${username}@codeaai.org`,
-          password
-        );
+    try {
+      if (username && password) {
+        if (username.includes("@")) {
+          await signInWithEmailAndPassword(auth, `${username}`, password);
+        } else {
+          await signInWithEmailAndPassword(
+            auth,
+            `${username}@codeaai.org`,
+            password
+          );
+        }
       }
+    }
+    catch (error: any) {
+      throw error;
     }
   };
 
@@ -58,7 +63,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error("Sign out error", error);
       throw error;
     }
   };

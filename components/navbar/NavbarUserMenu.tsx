@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import Link from "next/link";
+import { Timestamp } from "firebase/firestore";
 
 export function NavbarUserMenu() {
   const { user, logOut, status } = useAuth();
@@ -33,6 +34,7 @@ export function NavbarUserMenu() {
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const { theme, setTheme } = useTheme();
+  const [error, setError] = useState("");
 
   const fetchUser = async () => {
     if (user?.uid) {
@@ -60,9 +62,8 @@ export function NavbarUserMenu() {
           >
             <Avatar>
               <AvatarImage
-                src={`${
-                  userData?.avatar ? `/avatars/${userData.avatar}.svg` : ""
-                }`}
+                src={`${userData?.avatar ? `/avatars/${userData.avatar}.svg` : ""
+                  }`}
                 alt="pfp"
               />
               <AvatarFallback>
@@ -131,6 +132,7 @@ export function NavbarUserMenu() {
               </Button>
             ))}
           </div>
+          {error && <p className="text-destructive">{error}</p>}
           <DialogFooter>
             <Button
               variant="outline"
@@ -142,13 +144,19 @@ export function NavbarUserMenu() {
             </Button>
             <Button
               onClick={async () => {
-                if (userData) {
-                  await editUserData(userData.uid, {
-                    avatar: selectedAvatar || "boy1",
-                  });
-                  await fetchUser();
+                try {
+                  if (userData) {
+                    await editUserData(userData.uid, {
+                      avatar: selectedAvatar || "boy1",
+                      timestamp: Timestamp.now(),
+                    });
+                    await fetchUser();
+                    setSettingsOpen(false);
+                  }
                 }
-                setSettingsOpen(false);
+                catch {
+                  setError("Slow down! Try again later")
+                }
               }}
               className="w-fit"
             >

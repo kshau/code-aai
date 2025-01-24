@@ -87,7 +87,7 @@ export default function DashboardLeaderboard() {
         <CardDescription>
           You have earned {userData?.points} points from{" "}
           {userData?.solvedChallenges.length} challenge
-          {(userData?.solvedChallenges.length || 0) > 1 ? "s" : " "}
+          {(userData?.solvedChallenges.length || 0) != 1 ? "s" : " "}
         </CardDescription>
 
         <div className="flex gap-1 mt-2">

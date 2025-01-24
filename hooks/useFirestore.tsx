@@ -40,7 +40,7 @@ interface FirestoreContextType {
     data: UpdateData<T>
   ) => Promise<void>;
   getUserData: (uid: string) => Promise<User>;
-  editUserData: (uid: string, data: Partial<User>) => Promise<void>;
+  editUserData: (uid: string, data: any) => Promise<void>;
 }
 
 export const FirestoreContext = createContext<FirestoreContextType | undefined>(
@@ -165,11 +165,12 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
 
   const editUserData = async (
     uid: string,
-    data: Partial<User>
+    data: any
   ): Promise<void> => {
     try {
       const userDocRef = doc(firestore, "users", uid);
       await updateDoc(userDocRef, data);
+
     } catch (error) {
       console.error(`Error updating user data for UID '${uid}':`, error);
       throw error;

@@ -88,9 +88,9 @@ export default function DashboardCharts() {
     <div className="flex w-full h-60 gap-2 lg:animate-flyInFromTopLeft">
       <Card className="flex-grow justify-center lg:pb-0 pb-4">
         <CardHeader>
-          <CardTitle>Points over time</CardTitle>
+          <CardTitle>Points Over Time</CardTitle>
           <CardDescription>
-            The number of points you earned this week!
+            The number of points you earned everyday in the past week!
           </CardDescription>
         </CardHeader>
 

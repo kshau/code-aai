@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import Editor from "@monaco-editor/react";
@@ -16,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
+  capitalizeFirstLetter,
   Challenge,
   ChallengeTestCaseInput,
   loadCustomDarkEditorTheme,
@@ -74,7 +76,7 @@ export default function ChallengePage() {
           editorContent,
           challengeId: params.challengeId,
           userToken,
-          language: "python",
+          language,
         },
         { withCredentials: true }
       );
@@ -99,22 +101,27 @@ export default function ChallengePage() {
     setEditorContent("");
   };
 
-  const setDescription = (language: SupportedProgrammingLanguage, challengeData: Challenge) => {
-    const text = `\n${challengeData.name}:\n${challengeData.description}\n\nYou are using ${language}\n`;
+  const setStarterCode = (
+    language: SupportedProgrammingLanguage,
+    challengeData: Challenge
+  ) => {
+    const text = `\n\n${challengeData.name}:\n${challengeData.description}\n\nYou are using ${capitalizeFirstLetter(language)}.\n\n`;
     switch (language) {
       case "python":
+        setEditorContent(`'''${text}'''\n`);
+        break;
+      case "java":
         setEditorContent(
-          `'''${text}'''\n`
+          `/*${text}*/\n\nclass Main {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}`
         );
         break;
-      default:
+      case "c":
         setEditorContent(
-          `/*${text}*/\n`
+          `/*${text}*/\n\n#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}`
         );
         break;
     }
-
-  }
+  };
 
   useEffect(() => {
     loadCustomDarkEditorTheme();
@@ -130,7 +137,7 @@ export default function ChallengePage() {
 
       const challengeData = challengeDatas[0];
       setChallengeData(challengeData);
-      setDescription(language, challengeData!)
+      setStarterCode(language, challengeData!);
     };
 
     getChallengeData();
@@ -154,8 +161,8 @@ export default function ChallengePage() {
           <Select
             onValueChange={(value) => {
               const lang = value as SupportedProgrammingLanguage;
-              setLanguage(lang)
-              setDescription(lang, challengeData!)
+              setLanguage(lang);
+              setStarterCode(lang, challengeData!);
             }}
             value={language}
           >
@@ -166,94 +173,102 @@ export default function ChallengePage() {
               <SelectGroup>
                 <SelectLabel>Languages</SelectLabel>
                 <SelectItem value="python">Python</SelectItem>
-                <SelectItem value="javascript">JavaScript</SelectItem>
                 <SelectItem value="c">C</SelectItem>
                 <SelectItem value="java">Java</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-
         </Card>
         <div className="flex flex-col pl-2 w-[20vw] gap-y-6">
-          <Card className="relative h-full p-4">
-            <CardTitle className="mb-2">{challengeData?.name}</CardTitle>
+          <Card className="relative h-full">
+          <CardHeader>
+                <CardTitle className="mb-2">{challengeData?.name}</CardTitle>
 
-            {isSolvedAlready ? (
-              <div className="flex flex-col h-full justify-center items-center pb-32">
-                <div className="bg-gray-500 rounded-full p-4">
-                  <RefreshCcwDotIcon className="text-white aspect-square" />
-                </div>
-                <span className="text-center mt-4">
-                  You already solved this challenge. Good work!
-                </span>
-              </div>
-            ) : errorMessage ? (
-              <CardDescription className="text-red-500">
-                {errorMessage}
-              </CardDescription>
-            ) : codeSubmissionResult !== null ? (
-              codeSubmissionResult.failedTestCase !== null ? (
-                <>
-                  <CardDescription className="mb-4">
-                    Try again! Your code caused{" "}
-                    {codeSubmissionResult.totalCases -
-                      codeSubmissionResult.passedCases}
-                    /{codeSubmissionResult.totalCases} test cases to fail!
-                    Details are below for one of them.
-                  </CardDescription>
-                  <CardContent className="space-y-4 text-sm p-0">
-                    <div className="space-y-1">
-                      <span>Input</span>
-                      <pre className="rounded-sm p-2">
-                        {codeSubmissionResult?.failedTestCase.inputs
-                          .map(
-                            (input, index) =>
-                              `${input.name} = ${input.value}${index <
-                                codeSubmissionResult.failedTestCase!.inputs
-                                  .length -
-                                1
-                                ? ", "
-                                : ";"
-                              }`
-                          )
-                          .join("")}
-                      </pre>
+                {isSolvedAlready ? (
+                  <div className="w-full flex flex-col justify-center items-center">
+                    <div className="flex flex-col h-full justify-center items-center pb-32 mt-20">
+                      <div className="bg-gray-500 rounded-full p-4">
+                        <RefreshCcwDotIcon className="text-white aspect-square" />
+                      </div>
+                      <span className="text-center mt-4 w-72">
+                        You already solved this challenge. Good work!
+                      </span>
                     </div>
-                    <div className="space-y-1">
-                      <span>Received output</span>
-                      <pre className="rounded-sm p-2">
-                        {codeSubmissionResult?.failedTestCase.recievedOutput ||
-                          "None"}
-                      </pre>
-                    </div>
-                    <div className="space-y-1">
-                      <span>Expected output</span>
-                      <pre className="rounded-sm p-2">
-                        {codeSubmissionResult?.failedTestCase.expectedOutput}
-                      </pre>
-                    </div>
-                  </CardContent>
-                </>
-              ) : (
-                <div className="flex flex-col h-full justify-center items-center pb-32">
-                  <div className="bg-green-500 rounded-full p-4">
-                    <CheckCircleIcon className="text-white aspect-square" />
                   </div>
-                  <span className="text-center mt-4">
-                    Your code passed all test cases! Great job, +
-                    <span className="text-green-600 underline">
-                      {challengeData?.points}
-                    </span>{" "}
-                    points
-                  </span>
-                </div>
-              )
-            ) : (
-              <CardDescription>
-                Test your code against the test cases by pressing run. This is a{" "}
-                {challengeData?.difficulty} challenge!
-              </CardDescription>
-            )}
+                ) : errorMessage ? (
+                  <CardDescription className="text-red-500">
+                    {errorMessage}
+                  </CardDescription>
+                ) : codeSubmissionResult !== null ? (
+                  codeSubmissionResult.failedTestCase !== null ? (
+                    <>
+                      <CardDescription className="mb-4">
+                        Try again! Your code caused{" "}
+                        {codeSubmissionResult.totalCases -
+                          codeSubmissionResult.passedCases}
+                        /{codeSubmissionResult.totalCases} test cases to fail!
+                        Details are below for one of them.
+                      </CardDescription>
+                      <CardContent className="space-y-4 text-sm p-0">
+                        <div className="space-y-1">
+                          <span>Input</span>
+                          <pre className="rounded-sm p-2">
+                            {codeSubmissionResult?.failedTestCase.inputs
+                              .map(
+                                (input, index) =>
+                                  `${input.name} = ${input.value}${
+                                    index <
+                                    codeSubmissionResult.failedTestCase!.inputs
+                                      .length -
+                                      1
+                                      ? ", "
+                                      : ";"
+                                  }`
+                              )
+                              .join("")}
+                          </pre>
+                        </div>
+                        <div className="space-y-1">
+                          <span>Received output</span>
+                          <pre className="rounded-sm p-2">
+                            {codeSubmissionResult?.failedTestCase
+                              .recievedOutput || "None"}
+                          </pre>
+                        </div>
+                        <div className="space-y-1">
+                          <span>Expected output</span>
+                          <pre className="rounded-sm p-2">
+                            {
+                              codeSubmissionResult?.failedTestCase
+                                .expectedOutput
+                            }
+                          </pre>
+                        </div>
+                      </CardContent>
+                    </>
+                  ) : (
+                    <div className="w-full flex flex-col justify-center items-center">
+                      <div className="flex flex-col h-full justify-center items-center pb-32 w-72 mt-20">
+                        <div className="bg-green-500 rounded-full p-4">
+                          <CheckCircleIcon className="text-white aspect-square" />
+                        </div>
+                        <span className="text-center mt-4">
+                          Your code passed all test cases! Great job, {" "}
+                          <span className="text-green-600 underline">
+                            +{challengeData?.points}
+                          </span>{" "}
+                          points!
+                        </span>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <CardDescription>
+                    Test your code against the test cases by pressing run. This
+                    is a {challengeData?.difficulty} challenge!
+                  </CardDescription>
+                )}
+              </CardHeader>
 
             <div className="absolute bottom-2 left-0 right-0 flex flex-row justify-center gap-2">
               <Button

@@ -85,12 +85,12 @@ export default function DashboardLeaderboard() {
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
         <CardDescription>
-          You have earned {userData?.points} points from{" "}
-          {userData?.solvedChallenges.length} challenge
-          {(userData?.solvedChallenges.length || 0) != 1 ? "s" : " "}
+          You have earned <span className="text-primary font-semibold">{userData?.points}</span> points from{" "}
+          <span className="text-primary font-semibold">{userData?.solvedChallenges.length}</span> challenge
+          {(userData?.solvedChallenges.length || 0) != 1 && "s"}!
         </CardDescription>
 
-        <div className="flex gap-1 mt-2">
+        <div className="flex flex-row gap-x-2">
           <Button
             variant={filter === "top" ? "default" : "outline"}
             onClick={() => setFilter("top")}

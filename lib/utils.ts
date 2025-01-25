@@ -117,4 +117,4 @@ export function removeJSONCodeBlockMarkers(str: string) {
   return str;
 }
 
-export type SupportedProgrammingLanguage = "python" | "javascript" | "java" | "c";
+export type SupportedProgrammingLanguage = "python" | "java" | "c";

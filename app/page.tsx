@@ -14,11 +14,11 @@ export default function Landing() {
           alt="Proud Coder"
           className="w-72 mx-auto my-4"
         />
-        <p className="text-md mb-8 mt-2">
-          Jumpstart your coding journey with Codeaai, where beginners in Forsyth
+        <p className="text-md mb-8 mt-2 text-center">
+          Jumpstart your coding journey with CodeAAI, where beginners in Forsyth
           County can tackle fun challenges and compete for a{" "}
-          <span className="font-bold text-primary">$100</span> cash prize!
-          Brought to you by the Coding Club at Alliance Academy for Innovation
+          <span className="font-semibold text-primary">$100</span> cash prize!
+          Brought to you by the AAI Coding Club at Alliance Academy for Innovation.
         </p>
         <div className="flex flex-col items-center">
           <div className="flex justify-center space-x-4">
@@ -42,13 +42,13 @@ export default function Landing() {
             /> */}
           </div>
           <span className="text-sm text-center mt-4">
-            If you are interested in becoming a sponsor of CodeAAI, email us at{" "}
+            If you are interested in becoming a sponsor of CodeAAI, please email us at{" "}
             <Link
               href={"mailto:contact.codeaai@gmail.com"}
               className="text-primary underline"
             >
               contact.codeaai@gmail.com
-            </Link>
+            </Link>.
           </span>
         </div>
       </div>

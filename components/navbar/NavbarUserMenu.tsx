@@ -110,7 +110,7 @@ export function NavbarUserMenu() {
                 className="underline text-primary"
               >
                 contact.codeaai@gmail.com
-              </Link>
+              </Link>.
             </DialogDescription>
           </DialogHeader>
           <DialogHeader>Avatar</DialogHeader>

@@ -80,7 +80,10 @@ export async function POST(request: NextRequest) {
         });
 
         const result = await runCode(editorContent, args, language);
-        const output: string = result.stdout || "";
+        let output: string = result.stdout || "";
+        if(result.stderr){
+          output = result.stderr;
+        }
 
         if (output.trim() === testCase.expectedOutput.trim()) {
           pass += 1;
@@ -88,13 +91,14 @@ export async function POST(request: NextRequest) {
           failedTestCase = {
             inputs: inputs,
             expectedOutput: testCase.expectedOutput,
-            receivedOutput: result.stdout,
+            recievedOutput: output,
           };
         }
       })
     );
 
-    // Update user data if all test cases pass
+
+
     if (pass === testCases.length) {
       await userDoc.ref.update({
         points: userData.points + challengeData.points,

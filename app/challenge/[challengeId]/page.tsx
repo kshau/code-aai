@@ -179,7 +179,7 @@ export default function ChallengePage() {
             </SelectContent>
           </Select>
         </Card>
-        <div className="flex flex-col pl-2 w-[20vw] gap-y-6">
+        <div className="flex flex-col pl-2 min-w-[30vw] gap-y-6">
           <Card className="relative h-full">
           <CardHeader>
                 <CardTitle className="mb-2">{challengeData?.name}</CardTitle>

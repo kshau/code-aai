@@ -83,30 +83,33 @@ export function CreateError(error: ErrorTypes) {
   }
 }
 
-const { RAPIDAPI_API_KEY } = process.env;
-
 export async function runCode(
   code: string,
   args: any[],
   language: SupportedProgrammingLanguage
 ) {
-  let extension = "";
+  let extension;
+  let version;
   switch (language) {
     case "python":
       extension = "py";
+      version = "3.10";
       break;
     case "c":
       extension = "c";
+      version = "10.2.0";
       break;
     case "java":
       extension = "java";
+      version = "15.0.2";
       break;
   }
 
   const res = await axios.post(
-    "https://onecompiler-apis.p.rapidapi.com/api/v1/run",
+    "https://emkc.org/api/v2/piston/execute",
     {
       language,
+      version,
       stdin: args.join(" "),
       files: [
         {
@@ -117,13 +120,10 @@ export async function runCode(
     },
     {
       headers: {
-        "x-rapidapi-key": RAPIDAPI_API_KEY,
-        "x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
         "Content-Type": "application/json",
       },
     }
   );
-  console.log(res.data)
   return res.data;
 }
 

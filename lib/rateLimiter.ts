@@ -8,5 +8,5 @@ export const signupRateLimiter = new RateLimiterMemory({
 
 export const challengeSubmitRateLimit = new RateLimiterMemory({
     points: 2,
-    duration: 1,
+    duration: 10,
 });

@@ -6,6 +6,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Poppins } from "next/font/google";
+import { ReCaptchaProvider } from "next-recaptcha-v3";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,12 +31,14 @@ export default function RootLayout({
           defaultTheme="light"
           disableTransitionOnChange
         >
-          <ToastProvider>
-            <FirestoreProvider>
-              <AuthProvider>{children}</AuthProvider>
-            </FirestoreProvider>
-            <Toaster />
-          </ToastProvider>
+          <ReCaptchaProvider>
+            <ToastProvider>
+              <FirestoreProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </FirestoreProvider>
+              <Toaster />
+            </ToastProvider>
+          </ReCaptchaProvider>
         </ThemeProvider>
       </body>
     </html>

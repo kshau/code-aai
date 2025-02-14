@@ -3,6 +3,7 @@
 import Navbar from "@/components/navbar/Navbar";
 import LandingSignupForm from "@/components/landing/LandingSignupForm";
 import Link from "next/link";
+import { ReCaptchaProvider } from "next-recaptcha-v3";
 
 export default function Landing() {
   return (

@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toOrdinal, UserSignupRequestData } from "@/lib/utils";
-import { useFirestore } from "@/hooks/useFirestore";
 import { CheckCircleIcon } from "lucide-react";
-import { ReCaptcha } from "next-recaptcha-v3";
+import { useReCaptcha } from "next-recaptcha-v3";
 
 const defaultForm: UserSignupRequestData = {
   username: "",
@@ -29,43 +28,56 @@ export default function LandingSignupForm() {
   const [userSignupRequestData, setUserSignupRequestData] =
     useState<UserSignupRequestData>(defaultForm);
   const [alertMessage, setAlertMessage] = useState<string>("");
-  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
-  const { createDocument } = useFirestore();
-  const [token, setToken] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null); // Track success or failure
+  const { executeRecaptcha } = useReCaptcha();
 
   const handleSignupFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const token = await executeRecaptcha("form_submit");
 
-    if (!token) {
-      setAlertMessage("Please complete the CAPTCHA.");
+    if (userSignupRequestData.username.includes(" ")) {
+      setAlertMessage("Username cannot contain spaces.");
+      setIsSuccess(false);
+      return;
+    }
+    if (userSignupRequestData.username.includes("@")) {
+      setAlertMessage("Username cannot include an @");
+      setIsSuccess(false);
+      return;
+    }
+    if (userSignupRequestData.username.includes("^")) {
+      setAlertMessage("Username cannot include an ^");
       setIsSuccess(false);
       return;
     }
 
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...userSignupRequestData,
+          recaptchaToken: token,
+        }),
+      });
 
-    if (userSignupRequestData.username.includes(" ") || userSignupRequestData.username.includes("@") || userSignupRequestData.username.includes("^")) {
-      setAlertMessage("Invalid username: No spaces, '@', or '^' allowed.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed.");
+      }
+
+      setAlertMessage(
+        "Signup successful! Check your parent email once you are approved!"
+      );
+      setIsSuccess(true);
+      setUserSignupRequestData(defaultForm);
+    } catch (error: any) {
+      setAlertMessage(error.message || "An error occurred. Please try again.");
       setIsSuccess(false);
-      return;
     }
-
-    const response = await fetch("/api/sign-up", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-
-    const { success } = await response.json();
-    if (!success) {
-      setAlertMessage("CAPTCHA verification failed. Try again.");
-      setIsSuccess(false);
-      return;
-    }
-
-
-    setAlertMessage("Signup successful! Check your parent email once you are approved!");
-    setIsSuccess(true);
-    setUserSignupRequestData(defaultForm);
   };
 
   return (
@@ -94,10 +106,13 @@ export default function LandingSignupForm() {
                 <SelectTrigger id="gradeLevel">
                   <SelectValue placeholder="Select your grade level" />
                 </SelectTrigger>
+
                 <SelectContent>
                   {[...Array(13)].map((_, index) => (
                     <SelectItem key={index} value={(index + 1).toString()}>
-                      {index < 12 ? `${toOrdinal(index + 1)} grade` : "College or higher"}
+                      {index < 12
+                        ? `${toOrdinal(index + 1)} grade`
+                        : "College or higher"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -139,6 +154,7 @@ export default function LandingSignupForm() {
 
             <div className="space-y-2 mb-4">
               <Label>Coding Experience</Label>
+
               <RadioGroup
                 value={userSignupRequestData?.codingExperience}
                 onValueChange={(
@@ -155,18 +171,18 @@ export default function LandingSignupForm() {
                   <RadioGroupItem value="beginner" id="beginner" required />
                   <Label>Beginner</Label>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="intermediate" id="intermediate" />
                   <Label>Intermediate</Label>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="advanced" id="advanced" />
                   <Label>Advanced</Label>
                 </div>
               </RadioGroup>
             </div>
-
-            <ReCaptcha onValidate={setToken} action="signup_form" />
 
             <Button type="submit" className="w-full text-white">
               Sign Up

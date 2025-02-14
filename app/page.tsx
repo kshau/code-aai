@@ -3,17 +3,19 @@
 import Navbar from "@/components/navbar/Navbar";
 import LandingSignupForm from "@/components/landing/LandingSignupForm";
 import Link from "next/link";
-import { ReCaptchaProvider } from "next-recaptcha-v3";
+import Image from "next/image";
 
 export default function Landing() {
   return (
     <Navbar className="flex flex-col md:flex-row justify-center items-center px-4 gap-8 lg:gap-24 py-16 md:py-0">
       <div className="flex flex-col my-auto max-w-md">
         <h1 className="text-3xl font-bold mx-auto mb-4">Welcome to CodeAAI!</h1>
-        <img
+        <Image
           src="/graphics/undraw-proud-coder.svg"
           alt="Proud Coder"
-          className="w-72 mx-auto my-4"
+          width={400}
+          height={400}
+          priority={true}
         />
         <p className="text-md mb-8 mt-2 text-center">
           Jumpstart your coding journey with CodeAAI, where beginners in Forsyth

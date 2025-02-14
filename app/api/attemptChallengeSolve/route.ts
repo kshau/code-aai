@@ -1,5 +1,6 @@
 import { CreateError, ErrorTypes, runCode } from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
+import { challengeSubmitRateLimit } from "@/lib/rateLimiter";
 import { Challenge, SupportedProgrammingLanguage, User } from "@/lib/utils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,6 +13,13 @@ interface AttemptChallengeData {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const isRateLimited = await challengeSubmitRateLimit.consume(ip);
+
+  if (isRateLimited.remainingPoints <= 0) {
+    return NextResponse.json({ error: "Too many requests", left: isRateLimited.msBeforeNext }, { status: 429 });
+  }
+
   await initAdmin();
   const Auth = auth();
   const Firestore = firestore();
@@ -81,7 +89,7 @@ export async function POST(request: NextRequest) {
 
         const result = await runCode(editorContent, args, language);
         let output: string = result.stdout || "";
-        if(result.stderr){
+        if (result.stderr) {
           output = result.stderr;
         }
 

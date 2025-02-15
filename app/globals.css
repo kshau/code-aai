@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+	:root {
 		--background: 0 0% 100%;
 		--foreground: 222.2 84% 4.9%;
 		--card: 0 0% 100%;
@@ -69,11 +69,17 @@
 	* {
 		@apply border-border;
 	}
+
 	body {
 		@apply font-sans antialiased bg-background text-foreground;
 	}
 }
 
-nextjs-portal {
-	display: none;
-  }
+
+.grecaptcha-badge {
+	visibility: hidden !important;
+}
+
+html {
+	scroll-behavior: smooth;
+}

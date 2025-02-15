@@ -13,9 +13,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toOrdinal, UserSignupRequestData } from "@/lib/utils";
+import { UserSignupRequestData } from "@/lib/utils";
 import { CheckCircleIcon } from "lucide-react";
 import { useReCaptcha } from "next-recaptcha-v3";
+import Link from "next/link";
 
 const defaultForm: UserSignupRequestData = {
   username: "",
@@ -83,7 +84,7 @@ export default function LandingSignupForm() {
   return (
     <Card className="w-full max-w-md min-h-[60vh]">
       <CardHeader>
-        <CardTitle>Sign up</CardTitle>
+        <CardTitle>Register</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col h-full">
         {isSuccess === null ? (
@@ -108,11 +109,9 @@ export default function LandingSignupForm() {
                 </SelectTrigger>
 
                 <SelectContent>
-                  {[...Array(13)].map((_, index) => (
-                    <SelectItem key={index} value={(index + 1).toString()}>
-                      {index < 12
-                        ? `${toOrdinal(index + 1)} grade`
-                        : "College or higher"}
+                  {["9", "10", "11", "12"].map((position) => (
+                    <SelectItem key={position} value={(position).toString()}>
+                      {position}th Grade
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -187,6 +186,9 @@ export default function LandingSignupForm() {
             <Button type="submit" className="w-full text-white">
               Sign Up
             </Button>
+            <p className="text-muted-foreground text-center text-[10px]">
+              By signing up, you agree to CodeAAI&apos;s <Link href="/privacy-policy" className="underline">privacy policy</Link> and <Link href="/terms" className="underline">terms of use</Link>
+            </p>
           </form>
         ) : (
           <div className="flex flex-col text-center flex-grow items-center justify-center gap-4">

@@ -83,7 +83,7 @@ export default function Page() {
       <section
         id="howitworks"
         ref={ref}
-        className="w-full bg-blue-500 py-16 md:py-24 lg:py-64 px-4 md:px-8 lg:px-16 mt-16 md:mt-24 relative"
+        className="w-full bg-blue-500 py-16 md:py-24 xl:py-64 px-4 md:px-8 lg:px-16 mt-16 md:mt-24 relative"
       >
         <motion.div
           className="flex justify-center items-center flex-col z-50"

@@ -196,7 +196,7 @@ export default function ChallengePage() {
 
               {isSolvedAlready ? (
                 <div className="w-full flex flex-col justify-center items-center">
-                  <div className="flex flex-col h-full justify-center items-center pb-32 mt-20">
+                  <div className="flex flex-col h-full justify-center items-center mt-20 pb-32">
                     <div className="bg-gray-500 rounded-full p-4">
                       <RefreshCcwDotIcon className="text-white aspect-square" />
                     </div>

@@ -176,7 +176,7 @@ export default function ChallengePage() {
             }}
             value={language}
           >
-            <SelectTrigger className="w-40 absolute bottom-4 right-12">
+            <SelectTrigger className="w-40 absolute right-12 bottom-4">
               <SelectValue placeholder="Python" />
             </SelectTrigger>
             <SelectContent>

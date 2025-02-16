@@ -70,11 +70,14 @@ export default function Page() {
           />
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 lg:gap-16 relative bottom-[-60px] sm:bottom-[-40px] md:bottom-[-100px]">
-          {sponsors.map((logo) => (
-            <p className="p-2 sm:p-4 md:p-8 overline text-xs sm:text-sm md:text-base" key={logo}>
-              Your Logo Here
-            </p>
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 lg:gap-16 relative bottom-[-60px] sm:bottom-[-40px] md:bottom-[-70px]">
+          {sponsors.map((logo, index) => (
+            <motion.div key={index} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 + index * 0.2, scale: { delay: 0 } }}>
+              <p className="p-2 sm:p-4 md:p-8 overline text-xs sm:text-sm md:text-base" key={logo}>
+                Your Logo Here
+              </p>
+            </motion.div>
+            
           ))}
         </div>
         <div className="absolute z-10 opacity-70 dark:opacity-10 inset-0 h-full w-full bg-background bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>

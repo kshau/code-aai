@@ -14,31 +14,27 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
-interface NavbarLoginModalProps {
-  signIn: (user: string, password: string) => void;
-}
 
-export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
+export function NavbarLoginModal() {
   const router = useRouter();
   const [inputtedUsername, setInputtedUsername] = useState<string>("");
   const [inputtedPassword, setInputtedPassword] = useState<string>("");
   const [invalidCredentials, setInvalidCredentials] = useState<boolean>(false);
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
 
     try {
+      await signIn(inputtedUsername, inputtedPassword);
 
-      signIn(inputtedUsername, inputtedPassword);
-      router.push("/dashboard")
-
-    } catch (error: any) {
-      if (error.code == "auth/invalid-credential") {
-        setInvalidCredentials(true);
+      if (inputtedUsername && !inputtedUsername.includes("@")) {
+        router.push("/dashboard")
       }
-
+    } catch (error: any) {
+      setInvalidCredentials(true);
     };
   }
 
@@ -84,16 +80,13 @@ export function NavbarLoginModal({ signIn }: NavbarLoginModalProps) {
           {invalidCredentials && (
             <div className="text-difficulty-hard font-semibold mt-2 flex flex-row gap-x-1">
               <XIcon />
-              <span>No user found with these credentials!</span>
+              <span>Invalid credentials!</span>
             </div>
           )}
 
           <Button
             type="submit"
             className="w-full "
-            onClick={() => {
-              signIn(inputtedUsername, inputtedPassword);
-            }}
           >
             Log in
           </Button>

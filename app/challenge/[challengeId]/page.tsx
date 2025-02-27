@@ -154,11 +154,11 @@ export default function ChallengePage() {
   }, []);
 
   return (
-    <Navbar className="flex  items-center justify-center mb-16">
-      <div className="flex flex-col lg:flex-row gap-y-4">
-        <Card className="p-6 flex flex-wrap relative">
+    <Navbar>
+      <div className="flex flex-col lg:flex-row gap-y-4 items-center justify-center w-full h-screen">
+        <Card className="p-6 flex flex-wrap relative h-[75vh]">
           <Editor
-            height="70vh"
+            height="100%"
             width="50vw"
             language={language}
             theme={theme === "light" ? "custom-light" : "custom-dark"}
@@ -189,35 +189,29 @@ export default function ChallengePage() {
             </SelectContent>
           </Select>
         </Card>
-        <div className="flex flex-col pl-2 max-w-96 gap-y-6">
-          <Card className="relative h-full  pb-16 lg:pb-0">
-            <CardHeader>
-              <CardTitle className="mb-2">{challengeData?.name}</CardTitle>
 
+        <div className="flex flex-col pl-2 max-w-96 gap-y-6 w-full lg:w-auto">
+          <Card className="relative h-[75vh] flex flex-col">
+            <CardHeader className="flex-grow">
+              <CardTitle className="mb-2">{challengeData?.name}</CardTitle>
               {isSolvedAlready ? (
-                <div className="w-full flex flex-col justify-center items-center">
-                  <div className="flex flex-col h-full justify-center items-center mt-20 pb-32">
-                    <div className="bg-gray-500 rounded-full p-4">
-                      <RefreshCcwDotIcon className="text-white aspect-square" />
-                    </div>
-                    <span className="text-center mt-4 w-72">
-                      You already solved this challenge. Good work!
-                    </span>
+                <div className="flex flex-col h-full justify-center items-center">
+                  <div className="bg-gray-500 rounded-full p-4">
+                    <RefreshCcwDotIcon className="text-white aspect-square" />
                   </div>
+                  <span className="text-center mt-4 w-72">
+                    You already solved this challenge. Good work!
+                  </span>
                 </div>
               ) : errorMessage ? (
-                <CardDescription className="text-red-500">
-                  {errorMessage}
-                </CardDescription>
+                <CardDescription className="text-red-500">{errorMessage}</CardDescription>
               ) : codeSubmissionResult !== null ? (
                 codeSubmissionResult.failedTestCase !== null ? (
                   <>
                     <CardDescription className="mb-4">
                       Try again! Your code caused{" "}
-                      {codeSubmissionResult.totalCases -
-                        codeSubmissionResult.passedCases}
-                      /{codeSubmissionResult.totalCases} test cases to fail!
-                      Details are below for one of them.
+                      {codeSubmissionResult.totalCases - codeSubmissionResult.passedCases}
+                      /{codeSubmissionResult.totalCases} test cases to fail! Details below.
                     </CardDescription>
                     <CardContent className="space-y-4 text-sm p-0">
                       <div className="space-y-1">
@@ -227,12 +221,9 @@ export default function ChallengePage() {
                             .map(
                               (input, index) =>
                                 `${input.name} = ${input.value}${index <
-                                  codeSubmissionResult.failedTestCase!.inputs
-                                    .length -
-                                  1
+                                  codeSubmissionResult.failedTestCase!.inputs.length - 1
                                   ? ", "
-                                  : ";"
-                                }`
+                                  : ";"}`
                             )
                             .join("")}
                         </pre>
@@ -240,35 +231,29 @@ export default function ChallengePage() {
                       <div className="space-y-1">
                         <span>Received output</span>
                         <pre className="rounded-sm p-2">
-                          {codeSubmissionResult?.failedTestCase
-                            .recievedOutput || "None"}
+                          {codeSubmissionResult?.failedTestCase.recievedOutput || "None"}
                         </pre>
                       </div>
                       <div className="space-y-1">
                         <span>Expected output</span>
                         <pre className="rounded-sm p-2">
-                          {
-                            codeSubmissionResult?.failedTestCase
-                              .expectedOutput
-                          }
+                          {codeSubmissionResult?.failedTestCase.expectedOutput}
                         </pre>
                       </div>
                     </CardContent>
                   </>
                 ) : (
-                  <div className="w-full flex flex-col justify-center items-center">
-                    <div className="flex flex-col h-full justify-center items-center pb-32 w-72 mt-20">
-                      <div className="bg-green-500 rounded-full p-4">
-                        <CheckCircleIcon className="text-white aspect-square" />
-                      </div>
-                      <span className="text-center mt-4">
-                        Your code passed all test cases! Great job, {" "}
-                        <span className="text-green-600 underline">
-                          +{challengeData?.points}
-                        </span>{" "}
-                        points!
-                      </span>
+                  <div className="flex flex-col h-full justify-center items-center">
+                    <div className="bg-green-500 rounded-full p-4">
+                      <CheckCircleIcon className="text-white aspect-square" />
                     </div>
+                    <span className="text-center mt-4">
+                      Your code passed all test cases! Great job,{" "}
+                      <span className="text-green-600 underline">
+                        +{challengeData?.points}
+                      </span>{" "}
+                      points!
+                    </span>
                   </div>
                 )
               ) : (
@@ -280,10 +265,7 @@ export default function ChallengePage() {
             </CardHeader>
 
             <div className="absolute bottom-2 left-0 right-0 flex flex-row justify-center gap-2">
-              <Button
-                className="w-fit self-center"
-                onClick={attemptChallengeSolve}
-              >
+              <Button className="w-fit self-center text-white" onClick={attemptChallengeSolve}>
                 <PlayIcon />
                 Run
               </Button>

@@ -19,7 +19,6 @@ import Footer from "./Footer";
 export const links = [
   { href: "/#about", name: "About" },
   { href: "/#howitworks", name: "How it works" },
-  { href: "/#signup", name: "Sign up" }
 ];
 
 interface NavbarProps {
@@ -37,22 +36,28 @@ export default function Navbar({
   dynamic = false,
   footer = false
 }: NavbarProps) {
-  const { user, status, signIn, logOut } = useAuth();
+  const { user, status, logOut } = useAuth();
   const path = usePathname();
   const router = useRouter();
   const isActive = (href: string) => path === href;
   const [scrolled, setScrolled] = useState(!dynamic)
+  const [navLinks, setNavLinks] = useState(links);
 
   useEffect(() => {
     if (protectedRoute && status === "unauthenticated") {
       router.push("/");
     }
 
+
     if (status == "authenticated") {
-      links[links.length - 1] = ({ href: "/dashboard", name: "Dashboard" })
+      setNavLinks([...links, { href: "/dashboard", name: "Dashboard" }])
+    }
+    else {
+      setNavLinks([...links, { href: "/#signup", name: "Sign up" }])
     }
 
   }, [protectedRoute, status, router]);
+
   useEffect(() => {
     if (dynamic) {
       const handleScroll = () => {
@@ -64,7 +69,6 @@ export default function Navbar({
       handleScroll();
       return () => window.removeEventListener("scroll", handleScroll)
     }
-
   }, [])
 
   if (
@@ -89,7 +93,7 @@ export default function Navbar({
         </Link>
 
         <nav className="hidden sm:flex flex-row gap-6 items-center">
-          {links.map(({ href, name }, index) => {
+          {navLinks.map(({ href, name }, index) => {
             return (
               <Link
                 key={index}
@@ -108,7 +112,7 @@ export default function Navbar({
             {status !== "unauthenticated" ? (
               <NavbarUserMenu />
             ) : (
-              <NavbarLoginModal signIn={signIn} />
+              <NavbarLoginModal />
             )}
           </div>
         </nav>
@@ -134,7 +138,7 @@ export default function Navbar({
               {user ? (
                 <Button onClick={logOut}>Log out</Button>
               ) : (
-                <NavbarLoginModal signIn={signIn} />
+                <NavbarLoginModal />
               )}
             </nav>
           </SheetContent>

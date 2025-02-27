@@ -6,8 +6,8 @@ import React from 'react'
 export default function PrivacyPolicy() {
     return (
         <Navbar footer={true}>
-            <div className='w-full h-screen flex justify-center items-center'>
-                <Card className='max-w-[40vw] p-8  overflow-auto'>
+            <div className='w-full h-screen flex justify-center items-center '>
+                <Card className='max-w-[60vw] p-8  mt-16 overflow-auto'>
                     <h1 className="text-xl font-bold">Privacy Policy</h1>
                     <h3 className='text-muted-foreground  mb-4'>Last Updated on February 15th, 2025</h3>
                     <h2 className="text-lg font-semibold">1. Information We Collect</h2>

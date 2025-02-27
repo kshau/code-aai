@@ -17,6 +17,9 @@ import {
   UpdateData,
 } from "firebase/firestore";
 import { User } from "@/lib/utils";
+import { cache } from 'react'
+
+export const revalidate = 20
 
 interface FirestoreContextType {
   getDocuments: <T>(collectionName: string) => Promise<T[]>;
@@ -48,7 +51,7 @@ export const FirestoreContext = createContext<FirestoreContextType | undefined>(
 );
 
 export function FirestoreProvider({ children }: { children: React.ReactNode }) {
-  const getDocuments = async <T,>(collectionName: string): Promise<T[]> => {
+  const getDocuments = cache(async <T,>(collectionName: string): Promise<T[]> => {
     try {
       const querySnapshot: QuerySnapshot = await getDocs(
         collection(firestore, collectionName)
@@ -65,9 +68,9 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
       );
       throw error;
     }
-  };
+  });
 
-  const getUserData = async (uid: string): Promise<User> => {
+  const getUserData = cache(async (uid: string): Promise<User> => {
     try {
       const userDocRef = doc(firestore, "users", uid);
       const userDocSnap = await getDoc(userDocRef);
@@ -80,9 +83,9 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
       console.error(`Error fetching user data for UID '${uid}':`, error);
       throw error;
     }
-  };
+  });
 
-  const getDocument = async <T,>(
+  const getDocument = cache(async <T,>(
     collectionName: string,
     documentId: string
   ): Promise<T | undefined> => {
@@ -104,7 +107,7 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
       );
       throw error;
     }
-  };
+  });
 
   const queryDocuments = async <T,>(
     collectionName: string,

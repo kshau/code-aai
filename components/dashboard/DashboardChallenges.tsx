@@ -134,7 +134,7 @@ export default function DashboardChallenges() {
             </Select>
           </div>
 
-          <ScrollArea className="flex-grow pr-4">
+          <ScrollArea className="flex-grow pr-4 max-w-[50rem]">
             {searchedChallengesData.length > 0 ? (
               <div className="grid lg:grid-cols-2 gap-2 h-full max-w-[50rem] max-h-[40vh]">
                 {searchedChallengesData.map((challenge: Challenge, index) => {
@@ -154,10 +154,10 @@ export default function DashboardChallenges() {
                         <span className="font-light text-sm">
                           {challenge.description}
                         </span>
-                        <Link href={`/challenge/${challenge.id}`}>
+                        <Link href={`/challenge/${challenge.id}`} className="my-auto ml-auto">
                           <Button
                             variant="outline"
-                            className={`my-auto rounded-full aspect-square h-12 ${
+                            className={`rounded-full aspect-square h-12 ${
                               isSolved ? "bg-green-600 hover:bg-green-700" : ""
                             } `}
                           >

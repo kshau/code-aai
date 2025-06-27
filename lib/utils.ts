@@ -11,12 +11,9 @@ export type UserCodingExperience = "beginner" | "intermediate" | "advanced";
 export interface User {
   uid: string;
   avatar: string;
-  username: string;
-  gradeLevel: number;
-  parentEmail: string;
+  email: string;
   solvedChallenges: SolvedChallenge[];
   points: number;
-  codingExperience: UserCodingExperience;
 }
 
 export interface SolvedChallenge {
@@ -109,7 +106,7 @@ export interface UserSignupRequestDataDocument extends UserSignupRequestData {
 export function removeJSONCodeBlockMarkers(str: string) {
   // Trim the string to remove any leading/trailing whitespace or newlines
   const trimmed = str.trim();
-  
+
   // Check and remove markers if present
   if (trimmed.startsWith("```json") && trimmed.endsWith("```")) {
     return trimmed.slice(7, -3).trim();

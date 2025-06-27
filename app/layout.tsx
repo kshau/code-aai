@@ -5,10 +5,10 @@ import { FirestoreProvider } from "@/hooks/useFirestore";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Poppins } from "next/font/google";
+import { Nunito } from "next/font/google";
 import { ReCaptchaProvider } from "next-recaptcha-v3";
 
-const poppins = Poppins({
+const poppins = Nunito({
   subsets: ["latin"],
   weight: ["400", "400"], // Adjust weights as needed
 });

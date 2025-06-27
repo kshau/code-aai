@@ -4,13 +4,12 @@ import Link from "next/link";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { LogInIcon, Menu, User, UserPlus } from "lucide-react";
 import { LoadingPage } from "../loading";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import logo from "@/public/logo.svg";
+import logo from "@/public/logo.png";
 import { useAuth } from "@/hooks/useAuth";
-import { NavbarLoginModal } from "./NavbarLoginModal";
 import { NavbarUserMenu } from "./NavbarUserMenu";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion"
@@ -18,7 +17,8 @@ import Footer from "./Footer";
 
 export const links = [
   { href: "/#about", name: "About" },
-  { href: "/#howitworks", name: "How it works" },
+  { href: "/#benefits", name: "Benefits" },
+  { href: "/#features", name: "Features" },
 ];
 
 interface NavbarProps {
@@ -36,27 +36,10 @@ export default function Navbar({
   dynamic = false,
   footer = false
 }: NavbarProps) {
-  const { user, status, logOut } = useAuth();
+  const { status, logOut } = useAuth();
   const path = usePathname();
-  const router = useRouter();
   const isActive = (href: string) => path === href;
   const [scrolled, setScrolled] = useState(!dynamic)
-  const [navLinks, setNavLinks] = useState(links);
-
-  useEffect(() => {
-    if (protectedRoute && status === "unauthenticated") {
-      router.push("/");
-    }
-
-
-    if (status == "authenticated") {
-      setNavLinks([...links, { href: "/dashboard", name: "Dashboard" }])
-    }
-    else {
-      setNavLinks([...links, { href: "/#signup", name: "Sign up" }])
-    }
-
-  }, [protectedRoute, status, router]);
 
   useEffect(() => {
     if (dynamic) {
@@ -84,38 +67,47 @@ export default function Navbar({
       <motion.nav
         animate={{ y: scrolled ? 0 : -2, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
-        className={`w-full flex justify-between gap-32 px-4 sm:px-32 py-4 fixed top-0 left-0 right-0 z-50 ${scrolled ? "bg-background/90 backdrop-blur-lg border-b shadow-sm" : "bg-transparent"
+        className={`w-full flex justify-between gap-32 px-4 sm:px-32 py-4 fixed top-0 left-0 right-0 z-50  ${scrolled ? "bg-background/70 backdrop-blur-lg border-b shadow-sm" : "bg-transparent"
           }`}
       >
-        <Link href="/" className="flex items-center justify-center gap-x-1">
-          <Image src={logo} alt="Logo" width={40} height={40} className="rounded-full" />
+        <Link href="/" className="flex items-center justify-center">
+          <Image src={logo} alt="Logo" width={60} height={60} className="rounded-full" />
           <span className="font-bold text-lg sm:text-xl ml-2">CodeAAI</span>
         </Link>
 
-        <nav className="hidden sm:flex flex-row gap-6 items-center">
-          {navLinks.map(({ href, name }, index) => {
-            return (
-              <Link
-                key={index}
-                href={href}
-                className={`relative text-center transition-all ${isActive(href)
-                  ? "text-blue-500 font-bold"
-                  : "text-foreground/70 hover:text-blue-500"
-                  }`}
-              >
-                {name}
-              </Link>
-            );
-          })}
+        <div className="hidden sm:flex flex-row gap-12 items-center justify-center w-full">
+          {links.map(({ href, name }, index) => (
+            <Link
+              key={index}
+              href={href}
+              className={`relative text-center text-lg font-medium transition-all ${isActive(href)
+                ? "text-blue-500 font-bold"
+                : "text-foreground/70 hover:text-blue-500"
+                }`}
+            >
+              {name}
+            </Link>
+          ))}
+        </div>
 
-          <div className="flex items-center">
-            {status !== "unauthenticated" ? (
-              <NavbarUserMenu />
-            ) : (
-              <NavbarLoginModal />
-            )}
-          </div>
-        </nav>
+        <div className="flex items-center">
+          {status !== "unauthenticated" ? (
+            <NavbarUserMenu />
+          ) : (
+            <div className="flex w-full gap-2">
+              <Button asChild className="flex items-center justify-center w-full h-full">
+                <Link href="/authentication">
+                  Login <LogInIcon className="ml-2" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="flex items-center justify-center w-full h-full">
+                <Link href="/authentication?signup=true">
+                  Sign Up <UserPlus className="ml-2" />
+                </Link>
+              </Button>
+            </div>
+          )}
+        </div>
 
         <Sheet>
           <SheetTrigger asChild>
@@ -135,11 +127,7 @@ export default function Navbar({
                   {label}
                 </Link>
               ))}
-              {user ? (
-                <Button onClick={logOut}>Log out</Button>
-              ) : (
-                <NavbarLoginModal />
-              )}
+              <Button onClick={logOut}>Log out</Button>
             </nav>
           </SheetContent>
         </Sheet>

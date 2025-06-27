@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext } from "react";
-import { firestore } from "@/lib/firebase/config";
+import { auth, firestore } from "@/lib/firebase/config";
 import {
   collection,
   getDocs,
@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { User } from "@/lib/utils";
 import { cache } from 'react'
+import { getAuth } from "firebase/auth";
 
 export const revalidate = 20
 
@@ -70,21 +71,40 @@ export function FirestoreProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  const getUserData = cache(async (uid: string): Promise<User> => {
+  const getUserData = async (uid: string): Promise<User> => {
     try {
       const userDocRef = doc(firestore, "users", uid);
       const userDocSnap = await getDoc(userDocRef);
+
       if (userDocSnap.exists()) {
-        return { ...userDocSnap.data() } as User;
+        return userDocSnap.data() as User;
       } else {
-        throw new Error(`User document with UID '${uid}' not found.`);
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          throw new Error("No authenticated user found to create user data.");
+        }
+        const idToken = await currentUser.getIdToken();
+
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to create user: ${res.statusText}`);
+        }
+
+        const newUser = await res.json();
+        return newUser as User;
       }
     } catch (error) {
       console.error(`Error fetching user data for UID '${uid}':`, error);
       throw error;
     }
-  });
-
+  };
   const getDocument = cache(async <T,>(
     collectionName: string,
     documentId: string

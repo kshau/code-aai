@@ -37,7 +37,6 @@ export default function DashboardLeaderboard() {
           const userData = await getUserData(user.uid);
           setUserData(userData);
         } catch (error) {
-          console.error("Error fetching users:", error);
         }
       }
     };
@@ -84,13 +83,24 @@ export default function DashboardLeaderboard() {
     <Card className="lg:max-w-[40rem] h-full flex-grow flex-col lg:animate-flyInFromRight">
       <CardHeader>
         <CardTitle>Leaderboard</CardTitle>
-        <CardDescription>
-          You have earned <span className="text-primary font-semibold">{userData?.points}</span> points from{" "}
-          <span className="text-primary font-semibold">{userData?.solvedChallenges.length}</span> challenge
-          {(userData?.solvedChallenges.length || 0) != 1 && "s"}!
-        </CardDescription>
 
-        <div className="flex flex-row gap-x-2">
+        {userData ? (
+          <CardDescription>
+            You have earned{" "}
+            <span className="text-primary font-semibold">{userData.points}</span>{" "}
+            points from{" "}
+            <span className="text-primary font-semibold">
+              {userData.solvedChallenges.length}
+            </span>{" "}
+            challenge{userData.solvedChallenges.length !== 1 && "s"}!
+          </CardDescription>
+        ) : (
+          <CardDescription className="text-muted-foreground">
+            Your profile is still loading or unavailable.
+          </CardDescription>
+        )}
+
+        <div className="flex flex-row gap-x-2 mt-2">
           <Button
             variant={filter === "top" ? "default" : "outline"}
             onClick={() => setFilter("top")}
@@ -104,33 +114,35 @@ export default function DashboardLeaderboard() {
             onClick={() => setFilter("around")}
             className="text-xs"
             size={"sm"}
+            disabled={!userData}
           >
             Around You
           </Button>
         </div>
       </CardHeader>
+
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Rank</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Solves</TableHead>
-              <TableHead>Points</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers &&
-              leaderboardData &&
-              user &&
-              filteredUsers.map((leaderboardUser: User, index: number) => (
+        {filteredUsers?.length ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Rank</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Solves</TableHead>
+                <TableHead>Points</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.map((leaderboardUser, index) => (
                 <TableRow
                   key={leaderboardUser.uid}
-                  className={leaderboardUser.uid === user.uid ? "bg-muted" : ""}
+                  className={
+                    leaderboardUser.uid === user?.uid ? "bg-muted" : ""
+                  }
                 >
                   <TableCell>{index + 1}</TableCell>
                   <TableCell className="text-left">
-                    {leaderboardUser.username}
+                    {leaderboardUser.email}
                   </TableCell>
                   <TableCell>
                     {leaderboardUser.solvedChallenges.length}
@@ -140,8 +152,13 @@ export default function DashboardLeaderboard() {
                   </TableCell>
                 </TableRow>
               ))}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-sm text-muted-foreground text-center">
+            No leaderboard data available.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

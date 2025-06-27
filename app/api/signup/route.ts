@@ -1,53 +1,52 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { CreateError, verifyRecaptcha } from "@/lib/adminUtils";
-import { UserSignupRequestData } from "@/lib/utils";
-import { firestore } from "firebase-admin";
+import { User } from "@/lib/utils";
+import { firestore, auth } from "firebase-admin";
 import { NextResponse } from "next/server";
-import { ErrorTypes } from "@/lib/adminUtils";
-import { signupRateLimiter } from "@/lib/rateLimiter"; // Rate limit function
-import type { NextRequest } from 'next/server'
+import type { NextRequest } from "next/server";
+
 
 
 export async function POST(request: NextRequest) {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const isRateLimited = await signupRateLimiter.consume(ip);
-
-    if (isRateLimited.remainingPoints <= 0) {
-        return NextResponse.json({ error: "Too many requests", left: isRateLimited.msBeforeNext }, { status: 429 });
-    }
-
     await initAdmin();
-    const Firestore = firestore();
 
     try {
-        const { parentEmail, username, codingExperience, gradeLevel, recaptchaToken } = await request.json();
+        const { idToken } = await request.json();
 
-        if (!parentEmail || !username || !codingExperience || !gradeLevel || !recaptchaToken) {
-            return CreateError(ErrorTypes.INVALID_ARGUMENTS);
+        if (!idToken) {
+            return NextResponse.json(
+                { error: "Missing Firebase ID token" },
+                { status: 400 }
+            );
         }
 
-        // Verify reCAPTCHA token
-        const isValidRecaptcha = await verifyRecaptcha(recaptchaToken);
-        if (!isValidRecaptcha) {
-            return NextResponse.json({ message: "reCAPTCHA verification failed" }, { status: 400 });
+        // Verify Firebase Auth ID token
+        const decodedToken = await auth().verifyIdToken(idToken);
+        const uid = decodedToken.uid;
+
+        const db = firestore();
+
+        const userDocRef = db.collection("users").doc(uid);
+        const userDoc = await userDocRef.get();
+
+        if (!userDoc.exists) {
+            const defaultUser: User = {
+                uid,
+                avatar: "/boy1",
+                email: decodedToken.email || "",
+                solvedChallenges: [],
+                points: 0,
+            };
+
+            await userDocRef.set(defaultUser);
+            return NextResponse.json(defaultUser, { status: 201 });
+        } else {
+            // User doc already exists, return existing data
+            return NextResponse.json(userDoc.data(), { status: 200 });
         }
-
-        const signupData: UserSignupRequestData = {
-            parentEmail,
-            username,
-            codingExperience,
-            gradeLevel,
-        };
-
-        await Firestore.collection("signup-requests").add(signupData);
-
-        return NextResponse.json({
-            message: "Signed up successfully",
-        });
-    } catch (err) {
-        console.error("Signup error:", err);
+    } catch (error: any) {
+        console.error("CreateUser error:", error);
         return NextResponse.json(
-            { message: "Signup failed" },
+            { error: error.message || "Internal Server Error" },
             { status: 500 }
         );
     }

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserSignupRequestData } from "@/lib/utils";
-import { CheckCircleIcon } from "lucide-react";
+import { CheckCircleIcon, CircleAlertIcon } from "lucide-react";
 import { useReCaptcha } from "next-recaptcha-v3";
 import Link from "next/link";
 
@@ -149,6 +149,10 @@ export default function LandingSignupForm() {
                 placeholder="Enter your parent's email"
                 required
               />
+              <div className="flex flex-row gap-x-2 text-muted-foreground">
+                <CircleAlertIcon size={18}/>
+                <span className="text-[12px] my-auto">This address will be sent the approval email!</span>
+              </div>
             </div>
 
             <div className="space-y-2 mb-4">

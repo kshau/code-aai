@@ -99,6 +99,7 @@ export default function ChallengePage() {
       else {
 
         console.error("Error while attempting to solve the challenge:", error);
+
         setErrorMessage(
           "An error occurred while submitting your code. Please try again."
         );
@@ -155,7 +156,7 @@ export default function ChallengePage() {
 
   return (
     <Navbar>
-      <div className="flex flex-col lg:flex-row gap-y-4 items-center justify-center w-full h-screen">
+      <div className="flex flex-col lg:flex-row gap-y-4 items-center justify-center w-full mt-36 mb-16">
         <Card className="p-6 flex flex-wrap relative h-[75vh]">
           <Editor
             height="100%"

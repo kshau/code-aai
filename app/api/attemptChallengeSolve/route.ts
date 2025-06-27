@@ -13,6 +13,7 @@ interface AttemptChallengeData {
 }
 
 export async function POST(request: NextRequest) {
+
   const ip = request.headers.get("x-forwarded-for") || "unknown";
   const isRateLimited = await challengeSubmitRateLimit.consume(ip);
 
@@ -88,10 +89,7 @@ export async function POST(request: NextRequest) {
         });
 
         const result = await runCode(editorContent, args, language);
-        let output: string = result.stdout || "";
-        if (result.stderr) {
-          output = result.stderr;
-        }
+        const output = result.run.stdout || result.run.stderr;
 
         if (output.trim() === testCase.expectedOutput.trim()) {
           pass += 1;
@@ -131,7 +129,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (err: any) {
-    console.error(err);
+
     return NextResponse.json(
       {
         error: err.message,

@@ -33,7 +33,7 @@ export function NavbarLoginModal() {
       if (inputtedUsername && !inputtedUsername.includes("@")) {
         router.push("/dashboard")
       }
-    } catch (error: any) {
+    } catch {
       setInvalidCredentials(true);
     };
   }

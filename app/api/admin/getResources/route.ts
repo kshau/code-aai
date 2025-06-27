@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { CreateError, ErrorTypes, isAdmin } from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
 import { firestore } from "firebase-admin";
-import { UserSignupRequestDataDocument } from "@/lib/utils";
 
 const challengeTemplate = `{
     "name": "Example Challenge",
@@ -41,15 +40,9 @@ export async function POST(request: NextRequest) {
       return CreateError(ErrorTypes.UNAUTHORIZED);
     }
 
-    const snapshot = await Firestore.collection("signup-requests").get();
-    const signupRequests = snapshot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id || "N/A",
-    })) as UserSignupRequestDataDocument[];
 
     return NextResponse.json({
       challengeTemplate,
-      signupRequests,
     });
   } catch {
     return CreateError(ErrorTypes.INVALID_ARGUMENTS);

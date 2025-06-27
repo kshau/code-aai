@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { CogIcon, LogOut, MoonIcon, SunIcon } from "lucide-react";
+import { CogIcon, LayoutDashboard, LogOut, MoonIcon, SunIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import { useTheme } from "next-themes";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { Timestamp } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 export function NavbarUserMenu() {
   const { user, logOut, status } = useAuth();
@@ -35,6 +36,7 @@ export function NavbarUserMenu() {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const { theme, setTheme } = useTheme();
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const fetchUser = async () => {
     if (user?.uid) {
@@ -77,6 +79,14 @@ export function NavbarUserMenu() {
             {user?.email?.replace("@codeaai.org", "")}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              router.push("/dashboard")
+            }}
+            className="hover:cursor-pointer"
+          >
+            <LayoutDashboard /> Dashboard
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               setSettingsOpen(true);

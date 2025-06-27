@@ -4,9 +4,9 @@ import Link from "next/link";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LogInIcon, Menu, User, UserPlus } from "lucide-react";
+import { LogInIcon, Menu, UserPlus } from "lucide-react";
 import { LoadingPage } from "../loading";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import logo from "@/public/logo.png";
 import { useAuth } from "@/hooks/useAuth";
@@ -67,7 +67,7 @@ export default function Navbar({
       <motion.nav
         animate={{ y: scrolled ? 0 : -2, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
-        className={`w-full flex justify-between gap-32 px-4 sm:px-32 py-4 fixed top-0 left-0 right-0 z-50  ${scrolled ? "bg-background/70 backdrop-blur-lg border-b shadow-sm" : "bg-transparent"
+        className={`w-full flex justify-between px-4 sm:px-32 py-4 fixed top-0 left-0 right-0 z-50  ${scrolled ? "bg-background/70 backdrop-blur-lg border-b shadow-sm" : "bg-transparent"
           }`}
       >
         <Link href="/" className="flex items-center justify-center">
@@ -75,7 +75,7 @@ export default function Navbar({
           <span className="font-bold text-lg sm:text-xl ml-2">CodeAAI</span>
         </Link>
 
-        <div className="hidden sm:flex flex-row gap-12 items-center justify-center w-full">
+        <div className="hidden sm:flex flex-row gap-12 items-center justify-center flex-1">
           {links.map(({ href, name }, index) => (
             <Link
               key={index}
@@ -90,7 +90,7 @@ export default function Navbar({
           ))}
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center justify-end">
           {status !== "unauthenticated" ? (
             <NavbarUserMenu />
           ) : (

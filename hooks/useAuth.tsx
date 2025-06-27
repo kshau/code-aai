@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword
 } from "firebase/auth";
 import { auth } from "../lib/firebase/config";
+import { useRouter } from "next/navigation";
 
 // Define the shape of the context value
 interface AuthContextType {
@@ -28,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<
     "authenticated" | "unauthenticated" | "loading"
   >("loading");
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -71,6 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logOut = async () => {
     try {
       await signOut(auth);
+      router.push("/")
     } catch (error) {
       throw error;
     }

@@ -54,7 +54,7 @@ export default function Footer() {
                 </li>
                 <li className="mb-2">
                   <Link
-                    href="https://www.instagram.com/codingaai/"
+                    href="https://www.instagram.com/aai.codingclub"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline flex items-center gap-2"

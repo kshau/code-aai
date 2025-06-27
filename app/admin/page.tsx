@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/navbar/Navbar";
-import { AdminSignupRequestApproval } from "@/components/admin/AdminSignupRequestApproval";
 import { AdminChallengeEditor } from "@/components/admin/AdminChallengeEditor";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -14,7 +12,6 @@ export default function Admin() {
   const { user } = useAuth();
   const router = useRouter();
   const [challengeTemplate, setChallengeTemplate] = useState("");
-  const [initialSignupRequests, setInitalSignupRequests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -33,7 +30,6 @@ export default function Admin() {
 
         const data = await res.json();
         setChallengeTemplate(data.challengeTemplate);
-        setInitalSignupRequests(data.signupRequests);
         setIsLoading(false);
       } catch {
         router.push("/dashboard");
@@ -49,30 +45,9 @@ export default function Admin() {
     return <LoadingPage />;
   }
   return (
-    <Navbar className="flex justify-center items-center" protectedRoute>
-      <Tabs
-        defaultValue="signup-reuqests"
-        className="flex flex-col items-center"
-      >
-        <TabsList className="w-fit">
-          <TabsTrigger value="signup-reuqests">Signup Requests</TabsTrigger>
-          <TabsTrigger value="create-challenge">Create Challenge</TabsTrigger>
-          <TabsTrigger value="delete-users">Delete Users</TabsTrigger>
-        </TabsList>
-        <div className="h-96 max-w-[70rem]">
-          <TabsContent value="signup-reuqests">
-            <AdminSignupRequestApproval
-              signupRequests={initialSignupRequests}
-            />
-          </TabsContent>
-          <TabsContent value="create-challenge">
-            <AdminChallengeEditor challengeTemplate={challengeTemplate} />
-          </TabsContent>
-          <TabsContent value="delete-users">
-            <AdminUserManager />
-          </TabsContent>
-        </div>
-      </Tabs>
+    <Navbar className="flex xl:flex-row flex-col gap-4 justify-center items-center" protectedRoute>
+      <AdminChallengeEditor challengeTemplate={challengeTemplate} />
+      <AdminUserManager />
     </Navbar>
   );
 }

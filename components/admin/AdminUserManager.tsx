@@ -60,7 +60,7 @@ export function AdminUserManager() {
 
       toast({
         title: "User deleted",
-        description: `Successfully deleted user: ${userData.username}`,
+        description: `Successfully deleted user: ${userData.email}`,
       });
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -88,7 +88,7 @@ export function AdminUserManager() {
   };
 
   return (
-    <Card className="w-full h-96">
+    <Card className="w-1/3 h-[40rem]">
       <CardHeader>
         <CardTitle>Users</CardTitle>
       </CardHeader>
@@ -98,19 +98,10 @@ export function AdminUserManager() {
             <TableHeader>
               <TableRow>
                 <TableHead className="sticky top-0 bg-background">
-                  UID
-                </TableHead>
-                <TableHead className="sticky top-0 bg-background">
-                  Name
+                  Email
                 </TableHead>
                 <TableHead className="sticky top-0 bg-background">
                   Points
-                </TableHead>
-                <TableHead className="sticky top-0 bg-background">
-                  Parent Email
-                </TableHead>
-                <TableHead className="sticky top-0 bg-background">
-                  Grade Level
                 </TableHead>
                 <TableHead className="sticky top-0 bg-background">
                   Action
@@ -120,11 +111,8 @@ export function AdminUserManager() {
             <TableBody>
               {users.map((userData: User, index: number) => (
                 <TableRow key={index}>
-                  <TableCell>{userData.uid || "N/A"}</TableCell>
-                  <TableCell>{userData.username || "N/A"}</TableCell>
+                  <TableCell>{userData.email || "N/A"}</TableCell>
                   <TableCell>{userData.points || "N/A"}</TableCell>
-                  <TableCell>{userData.parentEmail || "N/A"}</TableCell>
-                  <TableCell>{userData.gradeLevel || "N/A"}</TableCell>
                   <TableCell className="flex gap-2">
                     <Popover>
                       <PopoverTrigger>

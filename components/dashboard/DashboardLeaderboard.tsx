@@ -37,6 +37,7 @@ export default function DashboardLeaderboard() {
           const userData = await getUserData(user.uid);
           setUserData(userData);
         } catch (error) {
+          console.error(error)
         }
       }
     };

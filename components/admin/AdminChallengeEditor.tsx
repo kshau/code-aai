@@ -69,11 +69,11 @@ export function AdminChallengeEditor({
   return (
     <Card className="p-4 ">
       <Editor
-        className="h-[40vh]"
         defaultLanguage="json"
         value={editorValue}
         onChange={handleEditorChange}
         width="60rem"
+        height="35rem"
       />
       <div className="mt-2 space-x-2">
         <AdminChallengeEditorGenerateDialog setEditorValue={setEditorValue} />

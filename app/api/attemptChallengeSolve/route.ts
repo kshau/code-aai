@@ -34,6 +34,10 @@ export async function POST(request: NextRequest) {
     return CreateError(ErrorTypes.UNAUTHORIZED);
   }
 
+  if (!user.email_verified) {
+    return CreateError(ErrorTypes.EMAIL_NOT_VERIFIED);
+  }
+
   const usersData = await Firestore.collection("users")
     .where("uid", "==", user.uid)
     .get();

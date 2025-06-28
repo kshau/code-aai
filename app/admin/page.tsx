@@ -45,7 +45,7 @@ export default function Admin() {
     return <LoadingPage />;
   }
   return (
-    <Navbar className="flex xl:flex-row flex-col gap-4 justify-center items-center" protectedRoute>
+    <Navbar className="flex flex-wrap lg:flex-row gap-4 items-center justify-center w-full mt-28 mb-16 p-2" protectedRoute>
       <AdminChallengeEditor challengeTemplate={challengeTemplate} />
       <AdminUserManager />
     </Navbar>

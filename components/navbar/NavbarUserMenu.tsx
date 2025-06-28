@@ -17,13 +17,13 @@ import { CogIcon, LayoutDashboard, LogOut, MoonIcon, SunIcon } from "lucide-reac
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { Timestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";

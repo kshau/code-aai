@@ -75,7 +75,7 @@ const Login = () => {
 
 	return (
 		<div className="flex w-screen h-screen">
-			<div className="w-2/5 p-10 flex flex-col justify-between items-center">
+			<div className="w-screen lg:w-2/5 p-10 flex flex-col justify-between items-center">
 				<Link href="/" className="flex items-center justify-center mb-6">
 					<Image src={logo} alt="Logo" width={50} height={50} className="rounded-full" />
 					<span className="font-bold text-2xl ml-2">CodeAAI</span>
@@ -144,8 +144,17 @@ const Login = () => {
 				</div>
 			</div>
 
-			<div className="w-3/5 relative bg-gray-50 flex items-center justify-center">
-				{/* Add image or animation here if desired */}
+			<div className="lg:w-3/5 relative hidden lg:flex items-center justify-center bg-[url('/graphics/authentication-background.png')] overflow-hidden">
+				<div className="bg-secondary aspect-square rounded-full flex justify-center p-20">
+					<Image
+						src={`/graphics/${isLogin ? "undraw_typing-code_6t2b.svg" : "undraw-proud-coder.svg"}`}
+						className="w-[20rem]"
+						alt="graphic 1"
+						width={400}
+						height={300}
+						loading="lazy"
+					/>
+				</div>
 			</div>
 		</div>
 	)

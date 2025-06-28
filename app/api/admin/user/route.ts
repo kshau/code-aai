@@ -1,9 +1,8 @@
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { CreateError, isAdmin, sendEmail } from "@/lib/adminUtils";
+import { CreateError, isAdmin } from "@/lib/adminUtils";
 import { auth, firestore } from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { ErrorTypes } from "@/lib/adminUtils";
-import { User } from "@/lib/utils";
 
 export async function DELETE(request: NextRequest) {
   await initAdmin();
@@ -12,7 +11,7 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { userToken, userUid, reason } = body;
+    const { userToken, userUid } = body;
 
     const isAdminUser = await isAdmin(userToken);
     if (!isAdminUser) {
@@ -20,25 +19,25 @@ export async function DELETE(request: NextRequest) {
     }
 
     const doc = Firestore.collection("users").doc(userUid);
-    const dataDoc = await doc.get();
-    const userData = dataDoc.data() as User;
+    // const dataDoc = await doc.get();
+    // const userData = dataDoc.data() as User;
 
-    await sendEmail(
-      userData.parentEmail,
-      "Code AAI Account Deleteion!",
-      `
-            Dear Parent or Guardian,<br/><br/>
+    // await sendEmail(
+    //   userData.parentEmail,
+    //   "Code AAI Account Deleteion!",
+    //   `
+    //         Dear Parent or Guardian,<br/><br/>
     
-            We are sorry to inform you that your account with username ${userData.username} has been deleted on CodeAAI. This is due to the following reason:<br/><br/>
-            ${reason}
-            <br/>
-            <br/>
-            Feel free to sign up again after resolving the issue above. 
-            <br/>
-            Best regards, <br/>
-            The Code AAI Team
-          `
-    );
+    //         We are sorry to inform you that your account with username ${userData.username} has been deleted on CodeAAI. This is due to the following reason:<br/><br/>
+    //         ${reason}
+    //         <br/>
+    //         <br/>
+    //         Feel free to sign up again after resolving the issue above. 
+    //         <br/>
+    //         Best regards, <br/>
+    //         The Code AAI Team
+    //       `
+    // );
 
     doc.delete();
     Auth.deleteUser(userUid);

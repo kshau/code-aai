@@ -25,7 +25,7 @@ export default function DashboardLeaderboard() {
   const [leaderboardData, setLeaderboardData] = useState<User[] | null>(null);
   const [filteredUsers, setFilteredUsers] = useState<User[] | null>(null);
 
-  const [filter, setFilter] = useState<"top" | "around">("top");
+  const [filter, setFilter] = useState<"top" | "around" | "school">("top");
   const { getDocuments, getUserData } = useFirestore();
   const { user } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
@@ -62,7 +62,7 @@ export default function DashboardLeaderboard() {
         return [];
       }
 
-      if (filter === "top") {
+      if (filter == "top" || filter == "school") {
         setFilteredUsers(leaderboardData.slice(0, 10));
       } else {
         const currentUser = await getUserData(user.uid);
@@ -118,6 +118,15 @@ export default function DashboardLeaderboard() {
             disabled={!userData}
           >
             Around You
+          </Button>
+          <Button
+            variant={filter === "school" ? "default" : "outline"}
+            onClick={() => setFilter("school")}
+            className="text-xs"
+            size={"sm"}
+            disabled={!userData}
+          >
+            Your School
           </Button>
         </div>
       </CardHeader>

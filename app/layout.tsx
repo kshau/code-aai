@@ -7,6 +7,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Nunito } from "next/font/google";
 import { ReCaptchaProvider } from "next-recaptcha-v3";
+import { Suspense } from "react";
 
 const poppins = Nunito({
   subsets: ["latin"],
@@ -34,7 +35,11 @@ export default function RootLayout({
           <ReCaptchaProvider>
             <ToastProvider>
               <FirestoreProvider>
-                <AuthProvider>{children}</AuthProvider>
+                <AuthProvider>
+                  <Suspense>
+                    {children}
+                  </Suspense>
+                </AuthProvider>
               </FirestoreProvider>
               <Toaster />
             </ToastProvider>

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CreateError, ErrorTypes, isAdmin } from "@/lib/adminUtils";
 import { initAdmin } from "@/lib/firebase-admin/config";
-import { firestore } from "firebase-admin";
 
 const challengeTemplate = `{
     "name": "Example Challenge",
@@ -29,7 +28,6 @@ const challengeTemplate = `{
 
 export async function POST(request: NextRequest) {
   await initAdmin();
-  const Firestore = firestore();
 
   try {
     const body = await request.json();

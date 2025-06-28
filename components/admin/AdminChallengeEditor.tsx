@@ -67,14 +67,17 @@ export function AdminChallengeEditor({
   }, [challengeTemplate]);
 
   return (
-    <Card className="p-4 ">
-      <Editor
-        defaultLanguage="json"
-        value={editorValue}
-        onChange={handleEditorChange}
-        width="60rem"
-        height="35rem"
-      />
+    <Card className="p-4 w-full lg:w-fit">
+      <div className="overflow-x-scroll">
+        <Editor
+          defaultLanguage="json"
+          value={editorValue}
+          onChange={handleEditorChange}
+          width="60rem"
+          height="35rem"
+        />
+      </div>
+      
       <div className="mt-2 space-x-2">
         <AdminChallengeEditorGenerateDialog setEditorValue={setEditorValue} />
         <Button onClick={handleCreate} className="text-white">

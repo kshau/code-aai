@@ -90,12 +90,12 @@ export default function Navbar({
           ))}
         </div>
 
-        <div className="flex items-center justify-end">
+        <div className="items-center justify-end hidden sm:flex ">
           {status !== "unauthenticated" ? (
             <NavbarUserMenu />
           ) : (
             <div className="flex w-full gap-2">
-              <Button asChild className="flex items-center justify-center w-full h-full">
+              <Button asChild className="flex items-center justify-center w-full h-full text-white">
                 <Link href="/authentication">
                   Login <LogInIcon className="ml-2" />
                 </Link>
@@ -127,13 +127,29 @@ export default function Navbar({
                   {label}
                 </Link>
               ))}
-              <Button onClick={logOut}>Log out</Button>
+              {status == "unauthenticated" ? (
+                <div className="flex flex-col gap-2">
+                  <Button asChild className="flex items-center justify-center w-full h-full text-white">
+                    <Link href="/authentication">
+                      Login <LogInIcon className="ml-2" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" className="flex items-center justify-center w-full h-full">
+                    <Link href="/authentication?signup=true">
+                      Sign Up <UserPlus className="ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <Button onClick={logOut}>Log out</Button>
+              )}
+              
             </nav>
           </SheetContent>
         </Sheet>
       </motion.nav>
 
-      <main className={cn(className, "z-0 flex-grow py-32 md:py-0")}>{children}</main>
+      <main className={cn(className, "z-0 flex-grow")}>{children}</main>
       {footer && <Footer />}
     </div>
   );

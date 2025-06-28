@@ -30,7 +30,7 @@ export default function Page() {
         >
 
           <motion.div
-            className="relative z-10 flex flex-col gap-12 lg:flex-row lg:gap-24 xl:gap-52
+            className="relative z-10 flex flex-col-reverse lg:flex-row gap-24 xl:gap-52
       rounded-xl p-8"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="relative w-48 sm:w-64 md:w-80 lg:w-[400px]">
+            <div className="self-center relative w-48 sm:w-64 md:w-80 lg:w-[400px]">
               <Image
                 src="/graphics/undraw_code-thinking_0vf2.svg"
                 alt="graphic 1"
@@ -124,7 +124,7 @@ export default function Page() {
                   <div className="p-3 mb-4 w-14 h-14 bg-gray-100 border border-gray-200 rounded-full text-blue-500 flex items-center justify-center">
                     <DollarSign size={20} />
                   </div>
-                  <p className="text-lg font-semibold text-black mb-1">Earn Cash Prizes</p>
+                  <p className="text-lg font-semibold text-black dark:text-white mb-1">Earn Cash Prizes</p>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     Win real money just by doing what you already love — coding! Compete and cash out.
                   </p>
@@ -135,7 +135,7 @@ export default function Page() {
                   <div className="p-3 mb-4 w-14 h-14 bg-gray-100 border border-gray-200 rounded-full text-blue-500 flex items-center justify-center">
                     <Medal size={20} />
                   </div>
-                  <p className="text-lg font-semibold text-black mb-1">Get Better at USACO</p>
+                  <p className="text-lg font-semibold text-black dark:text-white mb-1">Get Better at USACO</p>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     We train you with problem sets modeled on real USACO questions. It&apos;s grind time, but smarter.
                   </p>
@@ -146,7 +146,7 @@ export default function Page() {
                   <div className="p-3 mb-4 w-14 h-14 bg-gray-100 border border-gray-200 rounded-full text-blue-500 flex items-center justify-center">
                     <Code2 size={20} />
                   </div>
-                  <p className="text-lg font-semibold text-black mb-1">Improve Your Coding Skills</p>
+                  <p className="text-lg font-semibold text-black dark:text-white mb-1">Improve Your Coding Skills</p>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     Practice makes progress. Build confidence, speed, and style — one challenge at a time.
                   </p>
@@ -171,18 +171,17 @@ export default function Page() {
           viewport={{ once: true }}
         >
           <Image
-            src="/graphics/undraw-proud-coder.svg"
+            src="/graphics/landing/dashboard.png"
             alt="Progress Tracking Dashboard"
             width={500}
             height={400}
-            className="w-full max-w-md lg:max-w-xl"
+            className="w-full max-w-md lg:max-w-xl rounded-md"
           />
           <div className="flex flex-col text-left">
-            <p className="text-primary font-semibold mb-2 text-sm">Feature 1</p>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Progress Tracking Dashboard</h2>
-            <p className="text-muted-foreground text-base md:text-lg max-w-xl">
+            <span className="text-primary font-semibold mb-2 text-lg">Progress Tracking Dashboard</span>
+            <span className="text-muted-foreground text-base md:text-md max-w-xl">
               See how you improve over time with visual progress tracking, XP points, and rank badges. Every challenge counts.
-            </p>
+            </span>
           </div>
         </motion.div>
 
@@ -195,41 +194,16 @@ export default function Page() {
           viewport={{ once: true }}
         >
           <Image
-            src="/graphics/undraw-proud-coder.svg"
+            src="/graphics/landing/challenge.png"
             alt="Challenges that help you learn"
             width={500}
             height={400}
-            className="w-full max-w-md lg:max-w-xl"
+            className="w-full max-w-md lg:max-w-xl rounded-md"
           />
           <div className="flex flex-col text-left">
-            <p className="text-primary font-semibold mb-2 text-sm">Feature 2</p>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Challenges That Help You Learn</h2>
-            <p className="text-muted-foreground text-base md:text-lg max-w-xl">
+            <p className="text-primary font-semibold mb-2 text-lg">Challenges That Help You Learn</p>
+            <p className="text-muted-foreground text-base md:text-md max-w-xl">
               Solve personalized challenges tailored to your skill level and goals. Whether you&apos;re a beginner or a USACO gold contestant, there&apos;s a path for you.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Feature 3 */}
-        <motion.div
-          className="flex flex-col lg:flex-row items-center gap-12 max-w-screen-xl w-full"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          <Image
-            src="/graphics/undraw-proud-coder.svg"
-            alt="Leaderboard"
-            width={500}
-            height={400}
-            className="w-full max-w-md lg:max-w-xl"
-          />
-          <div className="flex flex-col text-left">
-            <p className="text-primary font-semibold mb-2 text-sm">Feature 3</p>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Leaderboard</h2>
-            <p className="text-muted-foreground text-base md:text-lg max-w-xl">
-              Compete with other coders on the leaderboard to earn recognition and motivate yourself to keep improving.
             </p>
           </div>
         </motion.div>

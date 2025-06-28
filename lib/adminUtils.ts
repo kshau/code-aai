@@ -55,6 +55,7 @@ export enum ErrorTypes {
   UNAUTHORIZED,
   CHALLENGE_NOT_FOUND,
   SOLVED_ALREADY,
+  EMAIL_NOT_VERIFIED
 }
 
 export function CreateError(error: ErrorTypes) {
@@ -79,6 +80,11 @@ export function CreateError(error: ErrorTypes) {
       return NextResponse.json(
         { solvedAlready: true, message: "You already solved this challenge!" },
         { status: 200 }
+      );
+    case ErrorTypes.EMAIL_NOT_VERIFIED:
+      return NextResponse.json(
+        { solvedAlready: true, message: "Your email is not verified!" },
+        { status: 400 }
       );
   }
 }

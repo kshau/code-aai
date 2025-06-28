@@ -88,7 +88,7 @@ export function AdminUserManager() {
   };
 
   return (
-    <Card className="w-1/3 h-[40rem]">
+    <Card className="h-[40rem] w-full lg:w-fit">
       <CardHeader>
         <CardTitle>Users</CardTitle>
       </CardHeader>

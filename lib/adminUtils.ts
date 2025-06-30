@@ -142,7 +142,7 @@ export async function isAdmin(userToken: any) {
     if (
       adminUser &&
       adminUser.email &&
-      ADMIN_EMAILS.includes(adminUser.email)
+      ["keshavrshah@gmail.com", "kshaurya731@gmail.com", "srithansh@gmail.com"].includes(adminUser.email)
     ) {
       return true;
     }

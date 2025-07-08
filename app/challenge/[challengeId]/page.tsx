@@ -231,7 +231,7 @@ export default function ChallengePage() {
                       </div>
                       <div className="space-y-1">
                         <span>Received output</span>
-                        <pre className="rounded-sm p-2">
+                        <pre className="rounded-sm p-2  text-wrap">
                           {codeSubmissionResult?.failedTestCase.recievedOutput || "None"}
                         </pre>
                       </div>

@@ -133,12 +133,9 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (err: any) {
-
     return NextResponse.json(
-      {
-        error: err.message,
-      },
-      { status: 500 }
+      { error: err.message },
+      { status: err.status }
     );
   }
 }

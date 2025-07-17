@@ -99,7 +99,7 @@ export async function runCode(
   switch (language) {
     case "python":
       extension = "py";
-      version = "3.10";
+      version = "3.12.0";
       break;
     case "c":
       extension = "c";
@@ -110,9 +110,8 @@ export async function runCode(
       version = "15.0.2";
       break;
   }
-
   const res = await axios.post(
-    "https://emkc.org/api/v2/piston/execute",
+    "https://piston.codeaai.org/api/v2/execute",
     {
       language,
       version,

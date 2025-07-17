@@ -112,7 +112,7 @@ export async function runCode(
   }
 
   const res = await axios.post(
-    "https://emkc.org/api/v2/piston/execute",
+    "https://piston.codeaai.org/api/v2/piston/execute",
     {
       language,
       version,

@@ -20,6 +20,9 @@ import {
   capitalizeFirstLetter,
   Challenge,
   ChallengeTestCaseInput,
+  generateCInputCode,
+  generateJavaInputCode,
+  generatePythonInputCode,
   loadCustomDarkEditorTheme,
   SupportedProgrammingLanguage,
 } from "@/lib/utils";
@@ -110,30 +113,65 @@ export default function ChallengePage() {
 
   const resetEditorContent = () => {
     setEditorContent("");
-  };
 
+    if (challengeData) {
+      setStarterCode(language, challengeData);
+    }
+  };
   const setStarterCode = (
     language: SupportedProgrammingLanguage,
     challengeData: Challenge
   ) => {
+    const vars = challengeData.input ?? [];
     const text = `\n\n${challengeData.name}:\n${challengeData.description}\n\nYou are using ${capitalizeFirstLetter(language)}.\n\n`;
+
+    let inputParsingCode = "";
     switch (language) {
       case "python":
-        setEditorContent(`'''${text}'''\n`);
+        inputParsingCode = generatePythonInputCode(vars);
+        setEditorContent(`'''${text}'''
+
+# The following variables hold the inputs you need to use to solve the challenge
+${inputParsingCode}
+`);
         break;
+
       case "java":
-        setEditorContent(
-          `/*${text}*/\n\nclass Main {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}`
-        );
+        inputParsingCode = generateJavaInputCode(vars);
+        setEditorContent(`/*${text}*/
+
+/* These variables contain the inputs you should use to solve the challenge */
+import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String inputLine = sc.nextLine();
+        String[] inputs = inputLine.split(" ");
+
+        ${inputParsingCode}
+
+        // Your code here
+    }
+}`);
         break;
+
       case "c":
-        setEditorContent(
-          `/*${text}*/\n\n#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}`
-        );
+        inputParsingCode = generateCInputCode(vars);
+        setEditorContent(`/*${text}*/
+
+/* These variables contain the inputs you should use to solve the challenge */
+#include <stdio.h>
+
+int main() {
+    ${inputParsingCode}
+
+    // Your code here
+    return 0;
+}`);
         break;
     }
   };
-
   useEffect(() => {
     loadCustomDarkEditorTheme();
   }, []);

@@ -34,7 +34,19 @@ export async function POST(request: NextRequest) {
       return CreateError(ErrorTypes.INVALID_ARGUMENTS);
     }
 
+
+
     const { testCases, ...challengeWithoutTestCases } = challengeData;
+
+    if (testCases && testCases.length > 0) {
+      const firstInputs = testCases[0].inputs;
+      const extractedInputs = firstInputs.map((input: any) => ({
+        name: input.name,
+        type: input.type,
+      }));
+      challengeWithoutTestCases.input = extractedInputs;
+    }
+
     await Firestore.collection("challenges")
       .doc(challengeData.id)
       .set(challengeWithoutTestCases);

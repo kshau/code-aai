@@ -37,6 +37,7 @@ export interface Challenge {
   description: string;
   difficulty: ChallengeDifficulty;
   points: number;
+  input: ChallengeTestCaseType[]
 }
 
 export interface ChallengeTestCases {
@@ -52,6 +53,11 @@ export interface ChallengeTestCaseInput {
   name: string;
   type: "string" | "int" | "float" | "boolean";
   value: any;
+}
+
+export interface ChallengeTestCaseType {
+  name: string;
+  type: "string" | "int" | "float" | "boolean";
 }
 
 export function formatChallengeTestCaseInputName(inputName: string) {
@@ -115,3 +121,125 @@ export function removeJSONCodeBlockMarkers(str: string) {
 }
 
 export type SupportedProgrammingLanguage = "python" | "java" | "c";
+export function generatePythonInputCode(inputs: { name: string; type: string }[]) {
+  // If no inputs, no code needed
+  if (!inputs.length) return "";
+
+  // Create code that reads one input line and splits it
+  // Then assign variables with proper type casting
+  const varAssignments = inputs.map(({ name, type }, i) => {
+    let cast = "";
+    switch (type.toLowerCase()) {
+      case "int":
+        cast = "int";
+        break;
+      case "float":
+        cast = "float";
+        break;
+      case "string":
+      case "str":
+        cast = ""; // strings don't need cast
+        break;
+      default:
+        cast = ""; // fallback no cast
+    }
+
+    return cast
+      ? `${name} = ${cast}(inputs[${i}])`
+      : `${name} = inputs[${i}]`;
+  });
+
+  return `
+inputs = input().split()
+${varAssignments.join("\n")}
+`.trim();
+}
+
+export function generateCInputCode(inputs: { name: string; type: string }[]) {
+  if (!inputs.length) return "";
+
+  // Create declarations for variables
+  const declarations = inputs.map(({ name, type }) => {
+    switch (type.toLowerCase()) {
+      case "int":
+        return `int ${name};`;
+      case "float":
+        return `float ${name};`;
+      case "string":
+      case "str":
+        return `char ${name}[100];`; // assuming max length 100 for strings
+      default:
+        return `char ${name}[100];`;
+    }
+  });
+
+  // Create scanf format string and args
+  let formatString = "";
+  let argsList = "";
+  inputs.forEach(({ name, type }) => {
+    switch (type.toLowerCase()) {
+      case "int":
+        formatString += "%d ";
+        argsList += `&${name}, `;
+        break;
+      case "float":
+        formatString += "%f ";
+        argsList += `&${name}, `;
+        break;
+      case "string":
+      case "str":
+        formatString += "%s ";
+        argsList += `${name}, `;
+        break;
+      default:
+        formatString += "%s ";
+        argsList += `${name}, `;
+    }
+  });
+
+  // Remove trailing space in formatString and comma in argsList
+  formatString = formatString.trim();
+  argsList = argsList.replace(/, $/, "");
+
+  return `
+${declarations.join("\n")}
+
+scanf("${formatString}", ${argsList});
+`.trim();
+}
+
+export function generateJavaInputCode(inputs: { name: string; type: string }[]) {
+  if (!inputs.length) return "";
+
+  const varAssignments = inputs.map(({ name, type }, i) => {
+    let parser = "";
+    let javaType = "";
+    switch (type.toLowerCase()) {
+      case "int":
+        parser = "Integer.parseInt";
+        javaType = "int";
+        break;
+      case "float":
+        parser = "Float.parseFloat";
+        javaType = "float";
+        break;
+      case "string":
+      case "str":
+        parser = "";
+        javaType = "String";
+        break;
+      default:
+        parser = "";
+        javaType = "String";
+    }
+
+    return parser
+      ? `${javaType} ${name} = ${parser}(inputs[${i}]);`
+      : `${javaType} ${name} = inputs[${i}];`;
+  });
+
+  return `
+String[] inputs = inputLine.split(" ");
+${varAssignments.join("\n")}
+`.trim();
+}

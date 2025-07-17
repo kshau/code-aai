@@ -39,13 +39,13 @@ export default function Page() {
             <div className="flex flex-col items-center sm:items-start">
               <p className="text-primary font-medium mb-2 text-sm sm:text-base">Welcome to CodeAAI</p>
               <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
-                Compete to win <span className="text-primary">$$$</span>
+                Compete and <span className="text-primary">Code</span>
               </p>
               <p className="max-w-xs sm:max-w-lg mt-2 text-xs sm:text-sm md:text-base">
-                Compete in Alliance&apos;s very own coding competition and earn cash prizes while growing as a computer scientist. Brought to you by the AAI Coding Club!
+                Compete in Alliance&apos;s very own USACO / Competitive Coding practice site! Brought to you by the AAI Coding Club (not directly affiliated with Alliance Acadamy for Innovation as of now)!
               </p>
               <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full sm:w-auto">
-                <Link href="/#signup">
+                <Link href="/authentication?signup=true">
                   <Button className="mt-2 p-3 sm:p-4 md:p-6 w-full sm:w-56" size="lg" asChild>
                     <span>
                       Register Now
@@ -53,7 +53,7 @@ export default function Page() {
                     </span>
                   </Button>
                 </Link>
-                <Link href="/#howitworks">
+                <Link href="/#features">
                   <Button className="mt-2 p-3 sm:p-4 md:p-6 w-full sm:w-56" size="lg" variant="outline" asChild>
                     <span>
                       Learn More
